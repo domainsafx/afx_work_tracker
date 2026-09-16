@@ -1,0 +1,3 @@
+Place the signed release APK here as: afx-work-tracker.apk
+(built via the steps in ANDROID_APK_GUIDE.md — not committed by default
+since it's a binary build artifact, not source).

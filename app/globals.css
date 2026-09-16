@@ -1,0 +1,123 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  AFX Digital — single source of truth for theme tokens.
+  Raw "H S% L%" triplets (no hsl() wrapper) because tailwind.config.ts
+  consumes them as hsl(var(--token)). Keep every token in ONE place —
+  a second/duplicate :root block previously shipped alongside this one
+  using oklch() values, which broke hsl(var(--background)) in light
+  mode and forced the whole app into a hardcoded dark theme as a
+  workaround. Do not reintroduce a second root block.
+*/
+:root {
+  --background: 220 25% 98%;
+  --foreground: 222 47% 13%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 13%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 13%;
+
+  --primary: 243 75% 59%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 222 25% 95%;
+  --secondary-foreground: 222 47% 13%;
+
+  --muted: 222 25% 95%;
+  --muted-foreground: 222 15% 46%;
+
+  --accent: 262 83% 66%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 152 60% 38%;
+  --warning: 38 92% 46%;
+
+  --border: 222 20% 90%;
+  --input: 222 20% 90%;
+  --ring: 243 75% 59%;
+
+  --radius: 1rem;
+}
+
+.dark {
+  --background: 230 35% 7%;
+  --foreground: 220 30% 96%;
+
+  --card: 230 30% 11%;
+  --card-foreground: 220 30% 96%;
+
+  --popover: 230 30% 11%;
+  --popover-foreground: 220 30% 96%;
+
+  --primary: 243 82% 67%;
+  --primary-foreground: 230 35% 7%;
+
+  --secondary: 230 25% 16%;
+  --secondary-foreground: 220 30% 96%;
+
+  --muted: 230 20% 16%;
+  --muted-foreground: 220 15% 65%;
+
+  --accent: 262 83% 70%;
+  --accent-foreground: 230 35% 7%;
+
+  --destructive: 0 72% 58%;
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 152 55% 50%;
+  --warning: 38 92% 55%;
+
+  --border: 230 20% 20%;
+  --input: 230 20% 20%;
+  --ring: 243 82% 67%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  background-image:
+    radial-gradient(circle at 15% 0%, hsl(243 82% 60% / 0.06), transparent 45%),
+    radial-gradient(circle at 85% 20%, hsl(262 83% 66% / 0.05), transparent 40%);
+  background-attachment: fixed;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at 15% 0%, hsl(243 82% 60% / 0.16), transparent 45%),
+    radial-gradient(circle at 85% 20%, hsl(262 83% 66% / 0.12), transparent 40%);
+}
+
+.glass {
+  background: hsl(var(--card) / 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.8);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.3); border-radius: 999px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@layer base {
+  * {
+    @apply border-border outline-none;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
