@@ -112,6 +112,8 @@ export const userService = {
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { department: { $regex: search, $options: "i" } },
         { employeeId: { $regex: search, $options: "i" } },
@@ -157,7 +159,9 @@ export const userService = {
   },
 
   async create(input: {
-    name: string;
+    firstName?: string;
+    lastName?: string;
+    name?: string;
     email: string;
     password: string;
     role: UserRole;
@@ -183,8 +187,15 @@ export const userService = {
     const employeeId =
       input.employeeId ?? (await getNextEmployeeId());
 
+    const fullName =
+      input.name?.trim() ||
+      [input.firstName?.trim(), input.lastName?.trim()].filter(Boolean).join(" ") ||
+      "Employee";
+
     const user = await User.create({
-      name: input.name,
+      name: fullName,
+      firstName: input.firstName?.trim() || undefined,
+      lastName: input.lastName?.trim() || undefined,
       email: input.email.toLowerCase(),
       passwordHash,
       role: input.role,
@@ -271,6 +282,56 @@ export const userService = {
       }
     ).lean();
   },
+  async update(
+    id: string,
+    input: {
+      firstName?: string;
+      lastName?: string;
+      name?: string;
+      email?: string;
+      department?: string;
+      designation?: string;
+      joiningDate?: string;
+      phone?: string;
+      whatsappOptIn?: boolean;
+      role?: UserRole;
+      isActive?: boolean;
+    }
+  ) {
+    await connectDB();
+    const update: Record<string, unknown> = {};
+
+    if (input.firstName !== undefined) update.firstName = input.firstName.trim();
+    if (input.lastName !== undefined) update.lastName = input.lastName.trim();
+
+    if (input.firstName !== undefined || input.lastName !== undefined) {
+      const user = await User.findById(id).lean();
+      const fn = input.firstName !== undefined ? input.firstName.trim() : (user as any)?.firstName ?? "";
+      const ln = input.lastName !== undefined ? input.lastName.trim() : (user as any)?.lastName ?? "";
+      update.name = [fn, ln].filter(Boolean).join(" ") || input.name || (user as any)?.name || "Employee";
+    } else if (input.name !== undefined) {
+      update.name = input.name.trim();
+    }
+
+    if (input.email !== undefined) {
+      const existing = await User.findOne({ email: input.email.toLowerCase(), _id: { $ne: id } });
+      if (existing) throw new Error("A user with this email already exists");
+      update.email = input.email.toLowerCase().trim();
+    }
+
+    if (input.department !== undefined) update.department = input.department.trim();
+    if (input.designation !== undefined) update.designation = input.designation.trim();
+    if (input.joiningDate !== undefined) {
+      update.joiningDate = input.joiningDate ? new Date(input.joiningDate) : undefined;
+    }
+    if (input.phone !== undefined) update.phone = input.phone || undefined;
+    if (input.whatsappOptIn !== undefined) update.whatsappOptIn = input.whatsappOptIn;
+    if (input.role !== undefined) update.role = input.role;
+    if (input.isActive !== undefined) update.isActive = input.isActive;
+
+    return User.findByIdAndUpdate(id, update, { new: true, runValidators: true }).lean();
+  },
+
   async delete(id: string) {
     await connectDB();
 

@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
   const sanitized = result.items.map((u: any) =>
     isFullDirectory
       ? { ...u, passwordHash: undefined }
-      : { _id: u._id, name: u.name, role: u.role, department: u.department }
+      : { _id: u._id, name: u.name, firstName: u.firstName, lastName: u.lastName, role: u.role, department: u.department }
   );
   return NextResponse.json({ ...result, items: sanitized });
 }
@@ -67,7 +67,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const user = await userService.create(parsed.data);
+    const fullName = parsed.data.name?.trim() || `${parsed.data.firstName.trim()} ${parsed.data.lastName.trim()}`.trim();
+    const user = await userService.create({
+      ...parsed.data,
+      name: fullName,
+    });
     return NextResponse.json({ ...user, passwordHash: undefined }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message ?? "Failed to create user" }, { status: 400 });

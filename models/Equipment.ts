@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export const EQUIPMENT_CATEGORIES = [
   "CAMERA",
@@ -36,5 +36,5 @@ const EquipmentSchema = new Schema<IEquipmentDoc>(
   { timestamps: true }
 );
 
-const Equipment: Model<IEquipmentDoc> = models.Equipment || model<IEquipmentDoc>("Equipment", EquipmentSchema);
+const Equipment: Model<IEquipmentDoc> = mongoose.models?.Equipment || mongoose.model<IEquipmentDoc>("Equipment", EquipmentSchema);
 export default Equipment;

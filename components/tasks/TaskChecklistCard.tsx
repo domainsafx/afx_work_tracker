@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle2, Circle, Link2, MessageSquareWarning, Save, ExternalLink } from "lucide-react";
+import { CheckCircle2, Circle, Link2, MessageSquareWarning, Save, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,39 +23,94 @@ export function TaskChecklistCard({
   taskId,
   stage,
   stageLink,
+  stageLinks,
   stageNote,
   canEdit,
 }: {
   taskId: string;
   stage: TaskStage;
   stageLink?: string;
+  stageLinks?: string[];
   stageNote?: string;
   canEdit: boolean;
 }) {
   const updateStage = useUpdateTaskStage(taskId);
-  const [link, setLink] = useState(stageLink ?? "");
+
+  const initialLinks =
+    stageLinks && stageLinks.length > 0
+      ? stageLinks
+      : stageLink
+        ? [stageLink]
+        : [""];
+
+  const [links, setLinks] = useState<string[]>(initialLinks);
   const [note, setNote] = useState(stageNote ?? "");
 
   const currentIndex = TASK_STAGE_ORDER.indexOf(stage);
 
+  function addLink() {
+    setLinks([...links, ""]);
+  }
+
+  function updateLink(index: number, value: string) {
+    const updated = [...links];
+    updated[index] = value;
+    setLinks(updated);
+  }
+
+  function removeLink(index: number) {
+    if (links.length <= 1) {
+      setLinks([""]);
+    } else {
+      setLinks(links.filter((_, i) => i !== index));
+    }
+  }
+
+  const cleanedLinks = links.map((l) => l.trim()).filter(Boolean);
+
   function moveTo(next: TaskStage) {
     if (!canEdit || updateStage.isPending) return;
-    toast.promise(updateStage.mutateAsync({ stage: next, link, note }), {
-      loading: "Updating checklist...",
-      success: `Moved to ${TASK_STAGE_LABEL[next]}`,
-      error: (err) => err?.message ?? "Failed to update checklist",
-    });
+    toast.promise(
+      updateStage.mutateAsync({
+        stage: next,
+        link: cleanedLinks[0] ?? "",
+        links: cleanedLinks,
+        note,
+      }),
+      {
+        loading: "Updating checklist...",
+        success: `Moved to ${TASK_STAGE_LABEL[next]}`,
+        error: (err) => err?.message ?? "Failed to update checklist",
+      }
+    );
   }
 
   function saveDetails() {
-    toast.promise(updateStage.mutateAsync({ stage, link, note }), {
-      loading: "Saving...",
-      success: "Checklist details saved",
-      error: (err) => err?.message ?? "Failed to save",
-    });
+    toast.promise(
+      updateStage.mutateAsync({
+        stage,
+        link: cleanedLinks[0] ?? "",
+        links: cleanedLinks,
+        note,
+      }),
+      {
+        loading: "Saving...",
+        success: "Checklist details saved",
+        error: (err) => err?.message ?? "Failed to save",
+      }
+    );
   }
 
-  const detailsDirty = link !== (stageLink ?? "") || note !== (stageNote ?? "");
+  const baselineLinks =
+    stageLinks && stageLinks.length > 0
+      ? stageLinks.filter(Boolean)
+      : stageLink
+        ? [stageLink]
+        : [];
+
+  const detailsDirty =
+    JSON.stringify(cleanedLinks) !== JSON.stringify(baselineLinks) ||
+    note !== (stageNote ?? "");
 
   return (
     <Card>
@@ -98,28 +153,74 @@ export function TaskChecklistCard({
           })}
         </div>
 
-        <div className="space-y-3 border-t border-border pt-4">
-          <div className="space-y-1.5">
-            <Label className="flex items-center gap-1.5 text-xs">
-              <Link2 className="h-3.5 w-3.5" /> Drive / content link
-            </Label>
+        <div className="space-y-4 border-t border-border pt-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-1.5 text-xs font-semibold">
+                <Link2 className="h-3.5 w-3.5" /> Upload Content / Deliverable Links
+              </Label>
+              {canEdit && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addLink}
+                  className="h-7 gap-1 text-xs text-primary"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add another
+                </Button>
+              )}
+            </div>
+
             {canEdit ? (
-              <Input
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-                placeholder="Paste a drive link once the deliverable is ready to share"
-              />
-            ) : stageLink ? (
-              <a
-                href={stageLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-              >
-                {stageLink} <ExternalLink className="h-3 w-3" />
-              </a>
+              <div className="space-y-2">
+                {links.map((lnk, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <Input
+                      value={lnk}
+                      onChange={(e) => updateLink(idx, e.target.value)}
+                      placeholder={`Paste Drive, Dropbox, Frame.io or deliverable link #${idx + 1}`}
+                      className="text-sm"
+                    />
+                    {links.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeLink(idx)}
+                        className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <p className="text-xs text-muted-foreground">
+                  Paste links to deliverables (Google Drive, Vimeo, Frame.io, etc.). Click &quot;+ Add another&quot; to upload/attach multiple content links.
+                </p>
+              </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No link added yet.</p>
+              <div className="space-y-1.5">
+                {cleanedLinks.length > 0 ? (
+                  cleanedLinks.map((lnk, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-semibold text-muted-foreground">
+                        {idx + 1}
+                      </span>
+                      <a
+                        href={lnk.startsWith("http") ? lnk : `https://${lnk}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline break-all"
+                      >
+                        {lnk} <ExternalLink className="h-3 w-3 shrink-0" />
+                      </a>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No content uploaded yet.</p>
+                )}
+              </div>
             )}
           </div>
 

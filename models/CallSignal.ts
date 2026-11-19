@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { ICallSignal } from "@/types";
 
 const CallSignalSchema = new Schema(
@@ -19,5 +19,5 @@ CallSignalSchema.index({ call: 1, to: 1, createdAt: 1 });
 CallSignalSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 });
 
 const CallSignal: Model<ICallSignal> =
-  models.CallSignal || model<ICallSignal>("CallSignal", CallSignalSchema);
+  mongoose.models?.CallSignal || mongoose.model<ICallSignal>("CallSignal", CallSignalSchema);
 export default CallSignal;

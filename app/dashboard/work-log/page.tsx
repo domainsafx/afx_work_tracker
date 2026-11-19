@@ -16,7 +16,7 @@ export default function WorkLogPage() {
   const isAdmin = role === "ADMIN";
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-6">
+    <div className="mx-auto max-w-6xl space-y-8 p-6">
       {/* Header */}
       <div className="rounded-2xl border bg-card p-8 shadow-sm">
         <div className="flex items-center gap-4">

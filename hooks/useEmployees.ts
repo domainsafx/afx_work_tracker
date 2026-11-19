@@ -2,7 +2,33 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
-import type { CreateEmployeeInput, UpdateContactInfoInput } from "@/lib/validations";
+import type { CreateEmployeeInput, UpdateContactInfoInput, UpdateEmployeeInput } from "@/lib/validations";
+
+export function useEmployee(id: string) {
+  return useQuery({
+    queryKey: ["user", id],
+    queryFn: () => apiClient.get<any>(`/api/users/${id}`),
+    enabled: !!id,
+  });
+}
+
+export function useUpdateEmployee(id: string) {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdateEmployeeInput) =>
+      apiClient.patch(`/api/users/${id}`, input),
+
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: ["users"],
+      });
+      qc.invalidateQueries({
+        queryKey: ["user", id],
+      });
+    },
+  });
+}
 
 export function useEmployees(query: Record<string, string | undefined> = {}) {
   const params = new URLSearchParams(

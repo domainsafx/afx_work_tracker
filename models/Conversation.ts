@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { IConversation } from "@/types";
 
 const ConversationSchema = new Schema(
@@ -33,5 +33,5 @@ ConversationSchema.index(
 );
 
 const Conversation: Model<IConversation> =
-  models.Conversation || model<IConversation>("Conversation", ConversationSchema);
+  mongoose.models?.Conversation || mongoose.model<IConversation>("Conversation", ConversationSchema);
 export default Conversation;

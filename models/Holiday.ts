@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface IHolidayDoc extends Document {
   title: string;
@@ -21,5 +21,5 @@ const HolidaySchema = new Schema<IHolidayDoc>(
   { timestamps: true }
 );
 
-const Holiday: Model<IHolidayDoc> = models.Holiday || model<IHolidayDoc>("Holiday", HolidaySchema);
+const Holiday: Model<IHolidayDoc> = mongoose.models?.Holiday || mongoose.model<IHolidayDoc>("Holiday", HolidaySchema);
 export default Holiday;

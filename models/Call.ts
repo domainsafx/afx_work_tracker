@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 
 const CallParticipantSchema = new Schema(
   {
@@ -37,5 +37,5 @@ const CallSchema = new Schema(
 
 CallSchema.index({ "participants.user": 1, status: 1 });
 
-const Call: Model<any> = models.Call || model<any>("Call", CallSchema);
+const Call: Model<any> = mongoose.models?.Call || mongoose.model<any>("Call", CallSchema);
 export default Call;

@@ -226,6 +226,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
         taskId={id}
         stage={task.stage}
         stageLink={task.stageLink}
+        stageLinks={task.stageLinks}
         stageNote={task.stageNote}
         canEdit={canUpdate}
       />

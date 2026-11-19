@@ -30,7 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     id,
     parsed.data.stage,
     { id: session.user.id as string, name: session.user.name ?? "User" },
-    { link: parsed.data.link, note: parsed.data.note }
+    { link: parsed.data.link, links: parsed.data.links, note: parsed.data.note }
   );
   if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(updated);

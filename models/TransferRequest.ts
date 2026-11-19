@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface ITransferRequestDoc extends Document {
   task: Schema.Types.ObjectId;
@@ -37,5 +37,5 @@ const TransferRequestSchema = new Schema<ITransferRequestDoc>(
 );
 
 const TransferRequest: Model<ITransferRequestDoc> =
-  models.TransferRequest || model<ITransferRequestDoc>("TransferRequest", TransferRequestSchema);
+  mongoose.models?.TransferRequest || mongoose.model<ITransferRequestDoc>("TransferRequest", TransferRequestSchema);
 export default TransferRequest;

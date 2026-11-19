@@ -26,7 +26,11 @@ export function EmployeeForm({ onDone }: { onDone: () => void }) {
 
   async function onSubmit(values: CreateEmployeeInput) {
     try {
-      await createEmployee.mutateAsync(values);
+      const fullName = `${values.firstName.trim()} ${values.lastName.trim()}`.trim();
+      await createEmployee.mutateAsync({
+        ...values,
+        name: fullName,
+      });
       toast.success(`${values.role === "ADMIN" ? "Admin" : "Employee"} created`);
       onDone();
     } catch (err: any) {
@@ -38,15 +42,21 @@ export function EmployeeForm({ onDone }: { onDone: () => void }) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label>Full name</Label>
-          <Input {...register("name")} placeholder="Jane Doe" />
-          {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+          <Label>First name</Label>
+          <Input {...register("firstName")} placeholder="Jane" />
+          {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
         </div>
         <div className="space-y-2">
-          <Label>Company email</Label>
-          <Input type="email" {...register("email")} placeholder="jane@company.com" />
-          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+          <Label>Last name</Label>
+          <Input {...register("lastName")} placeholder="Doe" />
+          {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Company email</Label>
+        <Input type="email" {...register("email")} placeholder="jane@company.com" />
+        {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-3">

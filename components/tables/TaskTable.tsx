@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UpdateTaskModal } from "@/components/modals/UpdateTaskModal";
 import { EditTaskModal } from "../modals/EditTaskModal";
 import { TransferTaskModal } from "@/components/modals/TransferTaskModal";
 import { TaskStageBadge } from "@/components/tasks/TaskStageControl";
@@ -178,12 +177,11 @@ export function TaskTable({
                   <div className="flex justify-end gap-2">
 
                     {canUpdate && !isClosed && (
-                      <UpdateTaskModal
-                        taskId={task._id}
-                        taskTitle={task.title}
-                        currentStatus={task.status}
-                        currentProgress={task.completionPercent}
-                      />
+                      <Link href={`/dashboard/tasks/${task._id}`}>
+                        <Button size="sm" variant="outline">
+                          <Pencil className="h-3.5 w-3.5 mr-1" /> Update Task
+                        </Button>
+                      </Link>
                     )}
 
                     {canTransfer && !isClosed && (

@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface IClientDoc extends Document {
   name: string;
@@ -29,5 +29,5 @@ const ClientSchema = new Schema<IClientDoc>(
   { timestamps: true }
 );
 
-const Client: Model<IClientDoc> = models.Client || model<IClientDoc>("Client", ClientSchema);
+const Client: Model<IClientDoc> = mongoose.models?.Client || mongoose.model<IClientDoc>("Client", ClientSchema);
 export default Client;

@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { INotification } from "@/types";
 
 const NotificationSchema = new Schema(
@@ -34,5 +34,5 @@ const NotificationSchema = new Schema(
 );
 
 const Notification: Model<INotification> =
-  models.Notification || model<INotification>("Notification", NotificationSchema);
+  mongoose.models?.Notification || mongoose.model<INotification>("Notification", NotificationSchema);
 export default Notification;

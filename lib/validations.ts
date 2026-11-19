@@ -37,8 +37,10 @@ export const resetPasswordSchema = z.object({
 });
 
 export const createEmployeeSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  email: z.string().email(),
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  name: z.string().optional(),
+  email: z.string().email("Enter a valid company email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   department: z.string().min(1, "Department is required"),
   designation: z.string().min(1, "Designation is required"),
@@ -50,6 +52,24 @@ export const createEmployeeSchema = z.object({
     .optional()
     .or(z.literal("")),
   whatsappOptIn: z.boolean().optional(),
+});
+
+export const updateEmployeeSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required").optional(),
+  lastName: z.string().trim().min(1, "Last name is required").optional(),
+  name: z.string().optional(),
+  email: z.string().email("Enter a valid company email").optional(),
+  department: z.string().trim().optional(),
+  designation: z.string().trim().optional(),
+  joiningDate: z.string().optional(),
+  role: z.enum(["ADMIN", "EMPLOYEE"]).optional(),
+  phone: z
+    .string()
+    .regex(/^\+[1-9]\d{7,14}$/, "Use international format, e.g. +919876543210")
+    .optional()
+    .or(z.literal("")),
+  whatsappOptIn: z.boolean().optional(),
+  isActive: z.boolean().optional(),
 });
 
 export const updateContactInfoSchema = z.object({
@@ -122,6 +142,7 @@ export const TASK_STAGE_VALUES = [
 export const updateTaskStageSchema = z.object({
   stage: z.enum(TASK_STAGE_VALUES),
   link: z.string().trim().max(2000).optional().or(z.literal("")),
+  links: z.array(z.string().trim().max(2000)).optional(),
   note: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 
@@ -365,6 +386,7 @@ export type verifyOtpApiInput = z.infer<typeof verifyOtpApiSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type UpdateContactInfoInput = z.infer<typeof updateContactInfoSchema>;
 export type CreateEmployeeInput = z.infer<typeof createEmployeeSchema>;
+export type UpdateEmployeeInput = z.infer<typeof updateEmployeeSchema>;
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type TaskProgressUpdateInput = z.infer<typeof taskProgressUpdateSchema>;
 export type UpdateTaskStageInput = z.infer<typeof updateTaskStageSchema>;

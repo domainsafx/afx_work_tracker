@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { ITask } from "@/types";
 
 const TimelineEntrySchema = new Schema(
@@ -88,6 +88,7 @@ const TaskSchema = new Schema(
     // drive/content link once a deliverable is sent to the client, or notes
     // on what changes were asked for. Carried forward until overwritten.
     stageLink: { type: String, trim: true },
+    stageLinks: { type: [String], default: [] },
     stageNote: { type: String, trim: true },
     timeSpentMinutes: { type: Number, default: 0 },
     delaySubmission: { type: DelaySubmissionSchema, default: undefined },
@@ -102,5 +103,5 @@ const TaskSchema = new Schema(
 
 TaskSchema.index({ title: "text", description: "text" });
 
-const Task: Model<ITask> = models.Task || model<ITask>("Task", TaskSchema);
+const Task: Model<ITask> = mongoose.models?.Task || mongoose.model<ITask>("Task", TaskSchema);
 export default Task;

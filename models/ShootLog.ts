@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 import { EQUIPMENT_CATEGORIES } from "./Equipment";
 
 export interface IShootLogItemDoc {
@@ -55,5 +55,5 @@ const ShootLogSchema = new Schema<IShootLogDoc>(
   { timestamps: true }
 );
 
-const ShootLog: Model<IShootLogDoc> = models.ShootLog || model<IShootLogDoc>("ShootLog", ShootLogSchema);
+const ShootLog: Model<IShootLogDoc> = mongoose.models?.ShootLog || mongoose.model<IShootLogDoc>("ShootLog", ShootLogSchema);
 export default ShootLog;

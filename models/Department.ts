@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { IDepartment } from "@/types";
 
 const DepartmentSchema = new Schema(
@@ -10,5 +10,5 @@ const DepartmentSchema = new Schema(
 );
 
 const Department: Model<IDepartment> =
-  models.Department || model<IDepartment>("Department", DepartmentSchema);
+  mongoose.models?.Department || mongoose.model<IDepartment>("Department", DepartmentSchema);
 export default Department;

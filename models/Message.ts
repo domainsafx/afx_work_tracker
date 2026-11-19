@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { IMessage } from "@/types";
 
 const MessageSchema = new Schema(
@@ -19,5 +19,5 @@ const MessageSchema = new Schema(
 
 MessageSchema.index({ conversation: 1, createdAt: 1 });
 
-const Message: Model<IMessage> = models.Message || model<IMessage>("Message", MessageSchema);
+const Message: Model<IMessage> = mongoose.models?.Message || mongoose.model<IMessage>("Message", MessageSchema);
 export default Message;

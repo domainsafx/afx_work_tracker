@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface IDeliveryEventDoc extends Document {
   client: Schema.Types.ObjectId;
@@ -22,5 +22,5 @@ const DeliveryEventSchema = new Schema<IDeliveryEventDoc>(
 );
 
 const DeliveryEvent: Model<IDeliveryEventDoc> =
-  models.DeliveryEvent || model<IDeliveryEventDoc>("DeliveryEvent", DeliveryEventSchema);
+  mongoose.models?.DeliveryEvent || mongoose.model<IDeliveryEventDoc>("DeliveryEvent", DeliveryEventSchema);
 export default DeliveryEvent;

@@ -130,7 +130,7 @@ export function useUpdateTask(taskId: string) {
 export function useUpdateTaskStage(taskId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: TaskStage | { stage: TaskStage; link?: string; note?: string }) =>
+    mutationFn: (input: TaskStage | { stage: TaskStage; link?: string; links?: string[]; note?: string }) =>
       apiClient.patch(
         `/api/tasks/${taskId}/stage`,
         typeof input === "string" ? { stage: input } : input

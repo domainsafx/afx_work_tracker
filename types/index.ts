@@ -27,6 +27,8 @@ export type TaskStage =
 export interface IUser {
   _id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   employeeId?: string;
   email: string;
   passwordHash: string;
@@ -54,6 +56,8 @@ export interface IUser {
 export interface SafeUser {
   id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   employeeId?: string;
   email: string;
   role: UserRole;
@@ -122,6 +126,7 @@ export interface ITask {
   currentIssue?: string;
   /** Drive/content link attached to the checklist stage (e.g. once Sent to Client). */
   stageLink?: string;
+  stageLinks?: string[];
   /** Free-form note attached to the checklist stage (e.g. what changes were asked for). */
   stageNote?: string;
   timeSpentMinutes: number;

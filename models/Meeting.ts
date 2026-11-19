@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { IMeeting } from "@/types";
 
 const MeetingSchema = new Schema(
@@ -32,5 +32,5 @@ const MeetingSchema = new Schema(
 MeetingSchema.index({ organizer: 1, scheduledAt: -1 });
 MeetingSchema.index({ participants: 1, scheduledAt: -1 });
 
-const Meeting: Model<IMeeting> = models.Meeting || model<IMeeting>("Meeting", MeetingSchema);
+const Meeting: Model<IMeeting> = mongoose.models?.Meeting || mongoose.model<IMeeting>("Meeting", MeetingSchema);
 export default Meeting;

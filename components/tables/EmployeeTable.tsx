@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSetUserActive, useDeleteUser } from "@/hooks/useEmployees";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
-import { MessageCircle, Trash2, UserCheck, UserX } from "lucide-react";
+import { MessageCircle, Trash2, UserCheck, UserX, Eye } from "lucide-react";
 import { EditContactDialog } from "@/components/modals/EditContactDialog";
 
 export function EmployeeTable({
@@ -63,7 +64,12 @@ export function EmployeeTable({
         {users.map((u) => (
           <TableRow key={u._id}>
             <TableCell className="font-medium">
-              {u.name}
+              <Link
+                href={`/dashboard/employees/${u._id}`}
+                className="hover:text-primary hover:underline font-semibold"
+              >
+                {u.name}
+              </Link>
               <div className="text-xs text-muted-foreground">{u.email}</div>
               {u.phone && (
                 <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
@@ -104,6 +110,15 @@ export function EmployeeTable({
             {canManage && (
               <TableCell className="text-right">
                 <div className="flex justify-end gap-1">
+                  <Link href={`/dashboard/employees/${u._id}`}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="View Details & Edit"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </Link>
                   <Button
                     variant="ghost"
                     size="icon"

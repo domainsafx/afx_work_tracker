@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 /**
  * Singleton document (there is only ever one row, keyed by `key: "global"`)
@@ -22,5 +22,5 @@ const AppSettingsSchema = new Schema<IAppSettingsDoc>(
 );
 
 const AppSettings: Model<IAppSettingsDoc> =
-  models.AppSettings || model<IAppSettingsDoc>("AppSettings", AppSettingsSchema);
+  mongoose.models?.AppSettings || mongoose.model<IAppSettingsDoc>("AppSettings", AppSettingsSchema);
 export default AppSettings;

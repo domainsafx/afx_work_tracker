@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface ITaskUpdateDoc extends Document {
   task: Schema.Types.ObjectId;
@@ -29,5 +29,5 @@ const TaskUpdateSchema = new Schema<ITaskUpdateDoc>(
 );
 
 const TaskUpdate: Model<ITaskUpdateDoc> =
-  models.TaskUpdate || model<ITaskUpdateDoc>("TaskUpdate", TaskUpdateSchema);
+  mongoose.models?.TaskUpdate || mongoose.model<ITaskUpdateDoc>("TaskUpdate", TaskUpdateSchema);
 export default TaskUpdate;

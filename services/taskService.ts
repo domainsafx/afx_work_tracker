@@ -164,7 +164,7 @@ export const taskService = {
     taskId: string,
     stage: string,
     actor: { id: string; name: string },
-    extra: { link?: string; note?: string } = {}
+    extra: { link?: string; links?: string[]; note?: string } = {}
   ) {
     await connectDB();
 
@@ -184,17 +184,34 @@ export const taskService = {
       lastUpdatedAt: new Date(),
     };
     const unset: Record<string, string> = {};
-    if (typeof extra.link === "string") {
-      if (extra.link.trim()) set.stageLink = extra.link.trim();
-      else unset.stageLink = "";
+
+    let resolvedLinks: string[] = [];
+    if (Array.isArray(extra.links)) {
+      resolvedLinks = extra.links.map((l: string) => l.trim()).filter(Boolean);
+      set.stageLinks = resolvedLinks;
+      set.stageLink = resolvedLinks[0] || "";
+    } else if (typeof extra.link === "string") {
+      if (extra.link.trim()) {
+        resolvedLinks = [extra.link.trim()];
+        set.stageLink = extra.link.trim();
+        set.stageLinks = [extra.link.trim()];
+      } else {
+        unset.stageLink = "";
+        set.stageLinks = [];
+      }
     }
+
     if (typeof extra.note === "string") {
       if (extra.note.trim()) set.stageNote = extra.note.trim();
       else unset.stageNote = "";
     }
 
     const actionParts = [`Stage moved to ${STAGE_LABEL[stage] ?? stage}`];
-    if (extra.link?.trim()) actionParts.push(`Link added: ${extra.link.trim()}`);
+    if (resolvedLinks.length > 0) {
+      actionParts.push(`Content links (${resolvedLinks.length}): ${resolvedLinks.join(", ")}`);
+    } else if (extra.link?.trim()) {
+      actionParts.push(`Link added: ${extra.link.trim()}`);
+    }
     if (extra.note?.trim()) actionParts.push(`Note: ${extra.note.trim()}`);
 
     const task = await Task.findByIdAndUpdate(

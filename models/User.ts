@@ -1,4 +1,4 @@
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { IUser } from "@/types";
 
 const UserSchema = new Schema(
@@ -6,6 +6,16 @@ const UserSchema = new Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
+    },
+
+    firstName: {
+      type: String,
+      trim: true,
+    },
+
+    lastName: {
+      type: String,
       trim: true,
     },
 
@@ -142,7 +152,7 @@ UserSchema.index({
 });
 
 const User: Model<IUser> =
-  models.User ||
-  model<IUser>("User", UserSchema);
+  mongoose.models?.User ||
+  mongoose.model<IUser>("User", UserSchema);
 
 export default User;

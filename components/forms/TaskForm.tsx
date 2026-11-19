@@ -85,11 +85,9 @@ export function TaskForm({
       assignedTo: initialValues?.assignedTo ?? "",
       department: initialValues?.department ?? "",
       priority: initialValues?.priority ?? "MEDIUM",
-      estimatedHours: initialValues?.estimatedHours,
       startDate: initialValues?.startDate
         ? formatDate(initialValues.startDate)
-        : "",
-
+        : formatDate(new Date()),
       deadline: initialValues?.deadline
         ? formatDate(initialValues.deadline)
         : "",
@@ -144,102 +142,79 @@ export function TaskForm({
         )}
       </div>
 
-      {/* Assign To + Priority */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label>Assign to</Label>
+      {/* Assign To */}
+      <div className="space-y-2">
+        <Label>Assign to</Label>
 
-          <Select
-            value={watch("assignedTo") || ""}
-            onValueChange={(employeeId) => {
-              setValue("assignedTo", employeeId);
+        <Select
+          value={watch("assignedTo") || ""}
+          onValueChange={(employeeId) => {
+            setValue("assignedTo", employeeId);
 
-              const employee = employees?.items?.find(
-                (emp: any) => emp._id === employeeId
-              );
+            const employee = employees?.items?.find(
+              (emp: any) => emp._id === employeeId
+            );
 
-              if (employee?.department) {
-                setValue("department", employee.department);
-              }
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select assignee" />
-            </SelectTrigger>
-
-            <SelectContent>
-              {admins.length > 0 && (
-                <>
-                  <div className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
-                    Admins
-                  </div>
-
-                  {admins.map((emp: any) => (
-                    <SelectItem key={emp._id} value={emp._id}>
-                      {emp.name} — {emp.department}
-                      {emp.availabilityStatus && emp.availabilityStatus !== "ACTIVE" && (
-                        <span className="ml-1 text-xs text-warning">
-                          ({emp.availabilityStatus === "ON_LEAVE" ? "On leave" : emp.availabilityStatus.replace("_", " ")}
-                          {emp.availabilityStatus === "ON_LEAVE" && emp.leaveTo ? ` till ${formatDisplayDate(emp.leaveTo)}` : ""})
-                        </span>
-                      )}
-                    </SelectItem>
-                  ))}
-                </>
-              )}
-
-              {nonAdmins.length > 0 && (
-                <>
-                  <div className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
-                    Employees
-                  </div>
-
-                  {nonAdmins.map((emp: any) => (
-                    <SelectItem key={emp._id} value={emp._id}>
-                      {emp.name} — {emp.department}
-                      {emp.availabilityStatus && emp.availabilityStatus !== "ACTIVE" && (
-                        <span className="ml-1 text-xs text-warning">
-                          ({emp.availabilityStatus === "ON_LEAVE" ? "On leave" : emp.availabilityStatus.replace("_", " ")}
-                          {emp.availabilityStatus === "ON_LEAVE" && emp.leaveTo ? ` till ${formatDisplayDate(emp.leaveTo)}` : ""})
-                        </span>
-                      )}
-                    </SelectItem>
-                  ))}
-                </>
-              )}
-            </SelectContent>
-          </Select>
-
-          {errors.assignedTo && (
-            <p className="text-xs text-destructive">
-              {errors.assignedTo.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label>Priority</Label>
-
-          <Select
-            value={watch("priority") || "MEDIUM"}
-            onValueChange={(value) =>
-              setValue("priority", value as "LOW" | "MEDIUM" | "HIGH")
+            if (employee?.department) {
+              setValue("department", employee.department);
             }
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select assignee" />
+          </SelectTrigger>
 
-            <SelectContent>
-              <SelectItem value="LOW">Low</SelectItem>
-              <SelectItem value="MEDIUM">Medium</SelectItem>
-              <SelectItem value="HIGH">High</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <SelectContent>
+            {admins.length > 0 && (
+              <>
+                <div className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+                  Admins
+                </div>
+
+                {admins.map((emp: any) => (
+                  <SelectItem key={emp._id} value={emp._id}>
+                    {emp.name} — {emp.department}
+                    {emp.availabilityStatus && emp.availabilityStatus !== "ACTIVE" && (
+                      <span className="ml-1 text-xs text-warning">
+                        ({emp.availabilityStatus === "ON_LEAVE" ? "On leave" : emp.availabilityStatus.replace("_", " ")}
+                        {emp.availabilityStatus === "ON_LEAVE" && emp.leaveTo ? ` till ${formatDisplayDate(emp.leaveTo)}` : ""})
+                      </span>
+                    )}
+                  </SelectItem>
+                ))}
+              </>
+            )}
+
+            {nonAdmins.length > 0 && (
+              <>
+                <div className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+                  Employees
+                </div>
+
+                {nonAdmins.map((emp: any) => (
+                  <SelectItem key={emp._id} value={emp._id}>
+                    {emp.name} — {emp.department}
+                    {emp.availabilityStatus && emp.availabilityStatus !== "ACTIVE" && (
+                      <span className="ml-1 text-xs text-warning">
+                        ({emp.availabilityStatus === "ON_LEAVE" ? "On leave" : emp.availabilityStatus.replace("_", " ")}
+                        {emp.availabilityStatus === "ON_LEAVE" && emp.leaveTo ? ` till ${formatDisplayDate(emp.leaveTo)}` : ""})
+                      </span>
+                    )}
+                  </SelectItem>
+                ))}
+              </>
+            )}
+          </SelectContent>
+        </Select>
+
+        {errors.assignedTo && (
+          <p className="text-xs text-destructive">
+            {errors.assignedTo.message}
+          </p>
+        )}
       </div>
 
-      {/* Department + Estimated Hours */}
+      {/* Department & Priority */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Department</Label>
@@ -268,51 +243,25 @@ export function TaskForm({
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label>Estimated Time</Label>
-            <Input
-              type="number"
-              min="1"
-              {...register("estimatedHours")}
-              placeholder="30"
-            />
-          </div>
+        <div className="space-y-2">
+          <Label>Priority</Label>
 
-          <div className="space-y-2">
-            <Label>Unit</Label>
-            <Select
-              defaultValue="MINUTES"
-              onValueChange={(value) => {
-                const currentValue = watch("estimatedHours");
+          <Select
+            value={watch("priority") || "MEDIUM"}
+            onValueChange={(value) =>
+              setValue("priority", value as "LOW" | "MEDIUM" | "HIGH")
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
 
-                if (currentValue) {
-                  if (value === "HOURS") {
-                    // Convert minutes to hours
-                    setValue(
-                      "estimatedHours",
-                      (Number(currentValue) / 60).toString() as any
-                    );
-                  } else {
-                    // Convert hours to minutes
-                    setValue(
-                      "estimatedHours",
-                      (Number(currentValue) * 60).toString() as any
-                    );
-                  }
-                }
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectItem value="MINUTES">Minutes</SelectItem>
-                <SelectItem value="HOURS">Hours</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <SelectContent>
+              <SelectItem value="LOW">Low</SelectItem>
+              <SelectItem value="MEDIUM">Medium</SelectItem>
+              <SelectItem value="HIGH">High</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

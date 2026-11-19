@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface IPasswordResetOTP extends Document {
   email: string;
@@ -25,5 +25,5 @@ const PasswordResetOTPSchema = new Schema<IPasswordResetOTP>(
 );
 
 const PasswordResetOTP: Model<IPasswordResetOTP> =
-  models.PasswordResetOTP || model<IPasswordResetOTP>("PasswordResetOTP", PasswordResetOTPSchema);
+  mongoose.models?.PasswordResetOTP || mongoose.model<IPasswordResetOTP>("PasswordResetOTP", PasswordResetOTPSchema);
 export default PasswordResetOTP;
