@@ -85,6 +85,7 @@ export function DeliveryCalendar({
   const [viewing, setViewing] = useState<IDeliveryEvent | null>(null);
   const [editing, setEditing] = useState<IDeliveryEvent | null>(null);
   const [addingDate, setAddingDate] = useState<string | null>(null);
+  const [mobileMode, setMobileMode] = useState<"agenda" | "grid">("agenda");
 
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(anchor));
@@ -102,6 +103,12 @@ export function DeliveryCalendar({
     return map;
   }, [events]);
 
+  const sortedEvents = useMemo(() => {
+    return [...events].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [events]);
+
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-2 md:grid-cols-7">
@@ -114,70 +121,136 @@ export function DeliveryCalendar({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" onClick={() => onAnchorChange(subMonths(anchor, 1))}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <span className="min-w-40 text-center text-sm font-semibold">{format(anchor, "MMMM yyyy")}</span>
-        <Button variant="outline" size="icon" onClick={() => onAnchorChange(addMonths(anchor, 1))}>
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => onAnchorChange(new Date())}>
-          Today
-        </Button>
+      {/* Header Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => onAnchorChange(subMonths(anchor, 1))}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="min-w-32 sm:min-w-40 text-center text-sm font-semibold">{format(anchor, "MMMM yyyy")}</span>
+          <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => onAnchorChange(addMonths(anchor, 1))}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="h-9 text-xs" onClick={() => onAnchorChange(new Date())}>
+            Today
+          </Button>
+        </div>
+
+        {/* Mobile View Toggle */}
+        <div className="flex md:hidden rounded-lg border border-border bg-secondary/30 p-0.5 text-xs">
+          <button
+            onClick={() => setMobileMode("agenda")}
+            className={cn(
+              "rounded px-2.5 py-1 font-medium transition-colors",
+              mobileMode === "agenda" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+            )}
+          >
+            Agenda
+          </button>
+          <button
+            onClick={() => setMobileMode("grid")}
+            className={cn(
+              "rounded px-2.5 py-1 font-medium transition-colors",
+              mobileMode === "grid" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+            )}
+          >
+            Month Grid
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 text-center text-xs font-medium text-muted-foreground">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} className="py-1">{d}</div>
-        ))}
+      {/* Mobile Agenda List View */}
+      <div className={cn("space-y-2 md:hidden", mobileMode !== "agenda" && "hidden")}>
+        {sortedEvents.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            No deliveries scheduled for {format(anchor, "MMMM yyyy")}.
+          </div>
+        ) : (
+          sortedEvents.map((event) => {
+            const status = dueStatus(new Date(event.date));
+            return (
+              <div
+                key={event._id}
+                onClick={() => setViewing(event)}
+                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-3.5 text-card-foreground shadow-sm active:bg-secondary/40 cursor-pointer"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-primary">
+                      {format(new Date(event.date), "EEE, MMM d")}
+                    </span>
+                    <Badge variant={status.variant} className="text-[10px] px-1.5 py-0">
+                      {status.label}
+                    </Badge>
+                  </div>
+                  <div className="mt-1 font-medium text-sm truncate">{event.title}</div>
+                  {event.description && (
+                    <div className="mt-0.5 text-xs text-muted-foreground truncate">{event.description}</div>
+                  )}
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </div>
+            );
+          })
+        )}
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 auto-rows-[6rem] sm:auto-rows-[7rem]">
-        {days.map((day) => {
-          const key = format(day, "yyyy-MM-dd");
-          const dayEvents = eventsByDay.get(key) ?? [];
-          const inMonth = isSameMonth(day, anchor);
-          const isToday = isSameDay(day, new Date());
+      {/* Month Grid View */}
+      <div className={cn("w-full", mobileMode !== "grid" && "hidden md:block")}>
+        <div className="w-full space-y-1.5">
+          <div className="grid grid-cols-7 gap-1 sm:gap-1.5 text-center text-xs font-medium text-muted-foreground">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+              <div key={d} className="py-1">{d}</div>
+            ))}
+          </div>
 
-          return (
-            <div
-              key={key}
-              className={cn(
-                "group relative flex flex-col gap-1 overflow-hidden rounded-xl border border-border p-1.5 text-left",
-                !inMonth && "opacity-40",
-                isToday && "border-primary/60 bg-primary/5",
-                dayEvents.length > 0 && "border-primary/40 bg-primary/5"
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <span className={cn("text-xs font-medium", isToday && "text-primary")}>{format(day, "d")}</span>
-                {canManage && (
-                  <button
-                    onClick={() => setAddingDate(key)}
-                    className="hidden text-muted-foreground hover:text-primary group-hover:block"
-                    title="Add delivery"
-                  >
-                    <Plus className="h-3 w-3" />
-                  </button>
-                )}
-              </div>
-              <div className="flex-1 space-y-1 overflow-y-auto">
-                {dayEvents.map((event) => (
-                  <button
-                    key={event._id}
-                    onClick={() => setViewing(event)}
-                    title={event.description || event.title}
-                    className="flex w-full cursor-pointer items-center gap-1 rounded-lg bg-primary/10 px-1.5 py-1 text-left text-[11px] font-medium leading-tight text-primary hover:bg-primary/20"
-                  >
-                    <Package className="h-2.5 w-2.5 shrink-0" />
-                    <span className="flex-1 truncate">{event.title}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+          <div className="grid grid-cols-7 gap-1 sm:gap-1.5 auto-rows-[4.5rem] sm:auto-rows-[6rem] md:auto-rows-[7rem]">
+            {days.map((day) => {
+              const key = format(day, "yyyy-MM-dd");
+              const dayEvents = eventsByDay.get(key) ?? [];
+              const inMonth = isSameMonth(day, anchor);
+              const isToday = isSameDay(day, new Date());
+
+              return (
+                <div
+                  key={key}
+                  className={cn(
+                    "group relative flex flex-col gap-1 overflow-hidden rounded-xl border border-border p-1 text-left",
+                    !inMonth && "opacity-40",
+                    isToday && "border-primary/60 bg-primary/5",
+                    dayEvents.length > 0 && "border-primary/40 bg-primary/5"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={cn("text-xs font-medium", isToday && "text-primary")}>{format(day, "d")}</span>
+                    {canManage && (
+                      <button
+                        onClick={() => setAddingDate(key)}
+                        className="hidden text-muted-foreground hover:text-primary group-hover:block"
+                        title="Add delivery"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-1 overflow-y-auto">
+                    {dayEvents.map((event) => (
+                      <button
+                        key={event._id}
+                        onClick={() => setViewing(event)}
+                        title={event.description || event.title}
+                        className="flex w-full cursor-pointer items-center gap-1 rounded-lg bg-primary/10 p-1 text-left font-medium leading-tight text-primary hover:bg-primary/20"
+                      >
+                        <Package className="h-2.5 w-2.5 shrink-0 hidden sm:inline" />
+                        <span className="flex-1 truncate text-[10px] sm:text-[11px]">{event.title}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Delivery details — anyone can open this, regardless of edit rights.

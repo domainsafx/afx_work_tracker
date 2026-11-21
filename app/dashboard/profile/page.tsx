@@ -21,13 +21,13 @@ export default function ProfilePage() {
     <div className="max-w-xl space-y-6">
       <h1 className="text-xl font-semibold">Profile</h1>
       <Card>
-        <CardContent className="flex items-center gap-4 p-6">
-          <Avatar className="h-16 w-16 text-lg">
+        <CardContent className="flex items-center gap-4 p-4 sm:p-6">
+          <Avatar className="h-14 w-14 sm:h-16 sm:w-16 text-lg shrink-0">
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <div>
-            <p className="text-lg font-semibold">{user.name}</p>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-base sm:text-lg font-semibold truncate">{user.name}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</p>
             <Badge className="mt-2" variant="secondary">{user.role?.replace("_", " ")}</Badge>
           </div>
         </CardContent>

@@ -143,7 +143,7 @@ export function AvailabilityForm({
 
             {status === "ON_LEAVE" && (
                 <>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div className="space-y-2">
                             <Label>Leave From</Label>
 
@@ -167,7 +167,8 @@ export function AvailabilityForm({
                         <Label>Reason</Label>
 
                         <Textarea
-                            rows={4}
+                            rows={3}
+                            className="text-base sm:text-sm"
                             placeholder="Leave reason..."
                             {...register("leaveReason")}
                         />
@@ -176,7 +177,7 @@ export function AvailabilityForm({
             )}
 
             <Button
-                className="w-full"
+                className="w-full h-10 sm:h-9 font-medium"
                 disabled={updateAvailability.isPending}
             >
                 {updateAvailability.isPending && (

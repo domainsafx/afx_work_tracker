@@ -1,7 +1,9 @@
+import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import ShootLog from "@/models/ShootLog";
 import { equipmentService, getOutstandingQuantities } from "./equipmentService";
 import { getWorkLogVisibleRoles } from "@/utils/permissions";
+import { withDistributedLock } from "@/lib/distributedLock";
 import type { UserRole } from "@/types";
 
 export const shootLogService = {
@@ -9,6 +11,9 @@ export const shootLogService = {
    * Checkout: creates the log with the selected equipment. Denormalizes
    * equipment name/category at the time of taking so the log stays
    * accurate even if the catalog entry is edited or retired later.
+   *
+   * Uses distributed atomic locking across all application instances and replica set transactions
+   * (when supported) to guarantee zero overselling or negative inventory.
    */
   async create(input: {
     shootTitle: string;
@@ -19,42 +24,84 @@ export const shootLogService = {
   }) {
     await connectDB();
 
-    const equipmentIds = input.items.map((i) => i.equipmentId);
-    const catalogItems = await equipmentService.findByIds(equipmentIds);
-    const catalogMap = new Map(catalogItems.map((c: any) => [c._id.toString(), c]));
-    const outstanding = await getOutstandingQuantities();
+    return withDistributedLock(
+      "equipment_checkout",
+      async () => {
+        let session: mongoose.ClientSession | undefined;
 
-    const items = input.items.map((i) => {
-      const catalogItem: any = catalogMap.get(i.equipmentId);
-      if (!catalogItem) throw new Error("One of the selected equipment items no longer exists");
+        try {
+          session = await mongoose.startSession();
+        } catch {
+          session = undefined;
+        }
 
-      const available = Math.max(0, catalogItem.totalQuantity - (outstanding.get(i.equipmentId) ?? 0));
-      if (i.quantity > available) {
-        throw new Error(`Only ${available} of "${catalogItem.name}" available right now`);
-      }
+        const executeReservation = async (activeSession?: mongoose.ClientSession) => {
+          const equipmentIds = input.items.map((i) => i.equipmentId);
+          const catalogItems = await equipmentService.findByIds(equipmentIds, activeSession);
+          const catalogMap = new Map(catalogItems.map((c: any) => [c._id.toString(), c]));
+          const outstanding = await getOutstandingQuantities(activeSession);
 
-      return {
-        equipment: i.equipmentId,
-        equipmentName: catalogItem.name,
-        category: catalogItem.category,
-        quantity: i.quantity,
-        takeNote: i.takeNote,
-      };
-    });
+          const items = input.items.map((i) => {
+            const catalogItem: any = catalogMap.get(i.equipmentId);
+            if (!catalogItem) throw new Error("One of the selected equipment items no longer exists");
 
-    const log = await ShootLog.create({
-      shootTitle: input.shootTitle,
-      shootDate: new Date(input.shootDate),
-      location: input.location,
-      takenBy: input.takenBy.id,
-      takenByName: input.takenBy.name,
-      takenByRole: input.takenBy.role,
-      items,
-      status: "OUT",
-      checkedOutAt: new Date(),
-    });
+            const available = Math.max(0, catalogItem.totalQuantity - (outstanding.get(i.equipmentId) ?? 0));
+            if (i.quantity > available) {
+              throw new Error(`Only ${available} of "${catalogItem.name}" available right now`);
+            }
 
-    return log.toObject();
+            return {
+              equipment: i.equipmentId,
+              equipmentName: catalogItem.name,
+              category: catalogItem.category,
+              quantity: i.quantity,
+              takeNote: i.takeNote,
+            };
+          });
+
+          const logDoc = new ShootLog({
+            shootTitle: input.shootTitle,
+            shootDate: new Date(input.shootDate),
+            location: input.location,
+            takenBy: input.takenBy.id,
+            takenByName: input.takenBy.name,
+            takenByRole: input.takenBy.role,
+            items,
+            status: "OUT",
+            checkedOutAt: new Date(),
+          });
+
+          if (activeSession) {
+            await logDoc.save({ session: activeSession });
+          } else {
+            await logDoc.save();
+          }
+
+          return logDoc.toObject();
+        };
+
+        if (session) {
+          try {
+            let result: any;
+            await session.withTransaction(async () => {
+              result = await executeReservation(session);
+            });
+            return result;
+          } catch (err: any) {
+            if (err?.message?.includes("replica set") || err?.message?.includes("Transaction numbers")) {
+              // Graceful fallback for non-replica set MongoDB environments
+              return executeReservation();
+            }
+            throw err;
+          } finally {
+            await session.endSession().catch(() => {});
+          }
+        }
+
+        return executeReservation();
+      },
+      { ttlMs: 10_000, waitTimeoutMs: 5_000 }
+    );
   },
 
   async findById(id: string) {
@@ -100,27 +147,40 @@ export const shootLogService = {
       .lean();
   },
 
+  /**
+   * Return: records returned items (with conditions and notes) and marks log returned.
+   */
   async markReturned(
     id: string,
-    input: { returnNote?: string; items: { equipmentId: string; returnCondition: "OK" | "DAMAGED" | "MISSING"; returnNote?: string }[] }
+    input: {
+      returnNote?: string;
+      items: {
+        equipmentId: string;
+        returnCondition: "OK" | "DAMAGED" | "MISSING";
+        returnNote?: string;
+      }[];
+    }
   ) {
     await connectDB();
-    const log: any = await ShootLog.findById(id);
-    if (!log) return null;
-    if (log.status === "RETURNED") return log.toObject();
 
-    const returnMap = new Map(input.items.map((i) => [i.equipmentId, i]));
-    log.items = log.items.map((item: any) => {
-      const match = returnMap.get(item.equipment.toString());
-      if (match) {
-        item.returnCondition = match.returnCondition;
-        item.returnNote = match.returnNote;
+    const log = await ShootLog.findById(id);
+    if (!log) throw new Error("Shoot log not found");
+    if (log.status === "RETURNED") throw new Error("This equipment has already been marked as returned");
+
+    // Merge return details into each item on the log
+    const returnMap = new Map(input.items.map((r) => [r.equipmentId, r]));
+
+    for (const item of log.items) {
+      const ret = returnMap.get(item.equipment.toString());
+      if (ret) {
+        item.returnCondition = ret.returnCondition;
+        item.returnNote = ret.returnNote;
       }
-      return item;
-    });
+    }
+
     log.status = "RETURNED";
     log.returnedAt = new Date();
-    if (input.returnNote) log.returnNote = input.returnNote;
+    log.returnNote = input.returnNote;
 
     await log.save();
     return log.toObject();

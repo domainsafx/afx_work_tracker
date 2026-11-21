@@ -38,7 +38,7 @@ export function LeaveRequestForm({ onSuccess }: { onSuccess?: () => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-2">
           <Label>From</Label>
           <Input type="date" value={leaveFrom} onChange={(e) => setLeaveFrom(e.target.value)} />
@@ -50,10 +50,10 @@ export function LeaveRequestForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
       <div className="space-y-2">
         <Label>Reason</Label>
-        <Textarea rows={3} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why are you requesting leave?" />
+        <Textarea rows={3} className="text-base sm:text-sm" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why are you requesting leave?" />
       </div>
-      <Button onClick={submit} disabled={requestLeave.isPending} className="w-full">
-        {requestLeave.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={requestLeave.isPending} className="w-full h-10 sm:h-9 font-medium">
+        {requestLeave.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Submit request
       </Button>
     </div>

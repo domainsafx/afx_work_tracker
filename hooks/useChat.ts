@@ -12,7 +12,13 @@ export function useConversations() {
   return useQuery({
     queryKey: ["chat", "conversations"],
     queryFn: () => apiClient.get<{ items: ConversationListItem[] }>("/api/chat/conversations"),
-    refetchInterval: CONVERSATIONS_POLL_MS,
+    refetchInterval: () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        return 60_000;
+      }
+      return CONVERSATIONS_POLL_MS;
+    },
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -38,7 +44,13 @@ export function useMessages(conversationId: string | null) {
     queryKey: ["chat", "messages", conversationId],
     queryFn: () => apiClient.get<{ items: IMessage[] }>(`/api/chat/conversations/${conversationId}/messages`),
     enabled: !!conversationId,
-    refetchInterval: MESSAGES_POLL_MS,
+    refetchInterval: () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        return 30_000;
+      }
+      return MESSAGES_POLL_MS;
+    },
+    refetchOnWindowFocus: true,
   });
 }
 

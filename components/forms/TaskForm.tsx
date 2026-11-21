@@ -215,7 +215,7 @@ export function TaskForm({
       </div>
 
       {/* Department & Priority */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Department</Label>
 
@@ -266,7 +266,7 @@ export function TaskForm({
       </div>
 
       {/* Dates */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Start date</Label>
           <Input type="date" {...register("startDate")} />

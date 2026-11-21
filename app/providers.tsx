@@ -17,7 +17,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <QueryClientProvider client={client}>
         {children}
-        <Toaster richColors position="top-right" theme="light" />
+        <Toaster
+          richColors
+          position="top-right"
+          theme="light"
+          style={{ maxWidth: "100vw" }}
+        />
       </QueryClientProvider>
     </SessionProvider>
   );

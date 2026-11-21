@@ -117,10 +117,10 @@ export default function MeetingsPage() {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5 min-w-0">
                     <p className="truncate text-sm font-medium">{meeting.title}</p>
-                    <Badge className={statusVariant[meeting.status]}>{meeting.status}</Badge>
-                    {meeting.organizer === userId && <Badge variant="outline">Organizer</Badge>}
+                    <Badge className={cn("text-[10px] px-1.5 py-0", statusVariant[meeting.status])}>{meeting.status}</Badge>
+                    {meeting.organizer === userId && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Organizer</Badge>}
                   </div>
                   <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">

@@ -35,7 +35,7 @@ export function BackButton({
       variant="ghost"
       onClick={handleBack}
       className={cn(
-        "gap-2",
+        "gap-2 h-9 px-3 text-xs sm:text-sm",
         className
       )}
     >

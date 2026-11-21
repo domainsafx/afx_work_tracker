@@ -90,14 +90,14 @@ function EmployeeTasksDialog({
       <Dialog open onOpenChange={(open) => !open && onClose()}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-10 w-10 shrink-0">
                   <AvatarFallback>{initials(employee.name)}</AvatarFallback>
                 </Avatar>
                 <div className="min-w-0 text-left">
-                  <DialogTitle className="truncate">{employee.name}</DialogTitle>
-                  <DialogDescription className="truncate">
+                  <DialogTitle className="truncate text-base sm:text-lg">{employee.name}</DialogTitle>
+                  <DialogDescription className="truncate text-xs sm:text-sm">
                     {employee.designation || employee.department || "Team member"} · Today&apos;s tasks
                   </DialogDescription>
                 </div>
@@ -106,10 +106,10 @@ function EmployeeTasksDialog({
               {canAssign && (
                 <Button
                   size="sm"
-                  className="shrink-0"
+                  className="w-full sm:w-auto shrink-0"
                   onClick={() => setAssignOpen(true)}
                 >
-                  <UserPlus className="h-4 w-4" />
+                  <UserPlus className="h-4 w-4 mr-1.5" />
                   Assign task
                 </Button>
               )}
@@ -190,17 +190,17 @@ export function TeamTodayPanel() {
 
   return (
     <Card>
-      <CardContent className="space-y-4 p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <CardContent className="space-y-4 p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2">
             <CalendarCheck2 className="h-4 w-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground">Active today</h2>
             <Badge variant="success">{employees.length}</Badge>
           </div>
-          <div className="relative w-full max-w-[220px]">
+          <div className="relative w-full sm:w-56">
             <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
-              className="h-8 pl-8 text-xs"
+              className="h-9 sm:h-8 pl-8 text-xs"
               placeholder="Search team..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -209,7 +209,7 @@ export function TeamTodayPanel() {
         </div>
 
         {isLoading && (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-20 rounded-xl" />
             ))}
@@ -223,7 +223,7 @@ export function TeamTodayPanel() {
         )}
 
         {!isLoading && employees.length > 0 && (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
             {employees.map((employee: any) => (
               <button
                 key={employee._id}

@@ -165,7 +165,95 @@ export function LeaveRequestsTable({
 
   return (
     <>
-      <Table>
+      {/* Mobile Card View (< md) */}
+      <div className="space-y-3 md:hidden">
+        {requests.map((r) => {
+          const canWithdraw =
+            showWithdraw && (r.status === "PENDING" || r.status === "APPROVED");
+
+          return (
+            <div key={`mobile-leave-${r._id}`} className="rounded-xl border border-border bg-card p-4 space-y-3 shadow-xs">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <span className="font-semibold text-foreground text-sm">{r.requestedByName}</span>
+                  <span className="ml-1.5 text-xs text-muted-foreground">({r.requestedByRole.replace("_", " ")})</span>
+                </div>
+                <Badge variant={STATUS_TONE[r.status] ?? "default"} className="text-[10px] px-1.5 py-0">
+                  {r.status}
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs border-y border-border/60 py-2">
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-medium">From</span>
+                  <span className="font-medium text-foreground">{formatDate(r.leaveFrom)}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-medium">To</span>
+                  <span className="font-medium text-foreground">{formatDate(r.leaveTo)}</span>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-muted-foreground block text-[10px] uppercase font-medium">Reason</span>
+                  <p className="text-muted-foreground mt-0.5">{r.reason || "—"}</p>
+                </div>
+                <div className="col-span-2 text-[10px] text-muted-foreground">
+                  Requested on {formatDate(r.createdAt)}
+                </div>
+              </div>
+
+              {(showActions || showWithdraw) && (
+                <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
+                  {showActions && r.status === "PENDING" && (
+                    <>
+                      <Button
+                        size="sm"
+                        className="flex-1 h-9 text-xs"
+                        onClick={() => act(r._id, "approve")}
+                        disabled={decide.isPending}
+                      >
+                        <Check className="h-3.5 w-3.5 mr-1" /> Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 h-9 text-xs"
+                        onClick={() => act(r._id, "reject")}
+                        disabled={decide.isPending}
+                      >
+                        <X className="h-3.5 w-3.5 mr-1" /> Reject
+                      </Button>
+                    </>
+                  )}
+
+                  {canWithdraw && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full h-9 text-xs"
+                      onClick={() => openWithdraw(r)}
+                      disabled={withdrawing}
+                    >
+                      <RotateCcw className="h-3.5 w-3.5 mr-1" /> Withdraw Leave
+                    </Button>
+                  )}
+
+                  {showActions && r.status !== "PENDING" && (
+                    <span className="text-xs text-muted-foreground">
+                      {r.reviewedByName
+                        ? `${r.status === "APPROVED" ? "Approved" : "Rejected"} by ${r.reviewedByName}`
+                        : "—"}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View (>= md) */}
+      <div className="hidden md:block">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -353,6 +441,7 @@ export function LeaveRequestsTable({
           })}
         </TableBody>
       </Table>
+      </div>
 
       {/* WITHDRAW CONFIRMATION */}
       <Dialog

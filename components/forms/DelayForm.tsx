@@ -39,8 +39,8 @@ export function DelayForm({ taskId }: { taskId: string }) {
         <Label>New expected completion date</Label>
         <Input type="date" value={expectedDate} onChange={(e) => setExpectedDate(e.target.value)} />
       </div>
-      <Button onClick={submit} disabled={submitDelay.isPending} variant="outline" className="w-full">
-        {submitDelay.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={submitDelay.isPending} variant="outline" className="w-full h-10 sm:h-9 font-medium">
+        {submitDelay.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Submit delay reason
       </Button>
     </div>

@@ -139,16 +139,16 @@ export default function EmployeeDetailPage({
           </div>
 
           {canEdit && (
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <Button size="sm" variant="outline" className="flex-1 sm:flex-none text-xs h-9" onClick={() => setEditOpen(true)}>
                 <Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit Details
               </Button>
 
-              <Button size="sm" variant="outline" onClick={() => setAvailabilityOpen(true)}>
+              <Button size="sm" variant="outline" className="flex-1 sm:flex-none text-xs h-9" onClick={() => setAvailabilityOpen(true)}>
                 <Shield className="mr-1.5 h-3.5 w-3.5" /> Availability
               </Button>
 
-              <Button size="sm" onClick={() => setAssignOpen(true)}>
+              <Button size="sm" className="w-full sm:w-auto text-xs h-9" onClick={() => setAssignOpen(true)}>
                 <Plus className="mr-1.5 h-3.5 w-3.5" /> Assign Task
               </Button>
             </div>
@@ -157,51 +157,51 @@ export default function EmployeeDetailPage({
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Briefcase className="h-5 w-5" />
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Briefcase className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Total Tasks</p>
-              <p className="text-xl font-bold">{tasks.length}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10 text-warning">
-              <Clock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">In Progress</p>
-              <p className="text-xl font-bold">{inProgressTasks}</p>
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">Total Tasks</p>
+              <p className="text-lg sm:text-xl font-bold">{tasks.length}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/10 text-success">
-              <CheckCircle2 className="h-5 w-5" />
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 text-warning">
+              <Clock className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Completed</p>
-              <p className="text-xl font-bold">{completedTasks}</p>
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">In Progress</p>
+              <p className="text-lg sm:text-xl font-bold">{inProgressTasks}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
-              <AlertCircle className="h-5 w-5" />
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
+              <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Delayed / Issues</p>
-              <p className="text-xl font-bold">{delayedTasks}</p>
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">Completed</p>
+              <p className="text-lg sm:text-xl font-bold">{completedTasks}</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs text-muted-foreground truncate">Delayed / Issues</p>
+              <p className="text-lg sm:text-xl font-bold">{delayedTasks}</p>
             </div>
           </div>
         </Card>
@@ -214,34 +214,34 @@ export default function EmployeeDetailPage({
             <CardTitle className="text-base">Employee Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <User className="h-4 w-4" /> First Name
               </span>
-              <span className="font-medium">{employee.firstName || employee.name?.split(" ")[0] || "—"}</span>
+              <span className="font-medium text-foreground">{employee.firstName || employee.name?.split(" ")[0] || "—"}</span>
             </div>
 
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <User className="h-4 w-4" /> Last Name
               </span>
-              <span className="font-medium">
+              <span className="font-medium text-foreground">
                 {employee.lastName || employee.name?.split(" ").slice(1).join(" ") || "—"}
               </span>
             </div>
 
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <Mail className="h-4 w-4" /> Company Email
               </span>
-              <span className="font-medium">{employee.email}</span>
+              <span className="font-medium text-foreground truncate">{employee.email}</span>
             </div>
 
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <Phone className="h-4 w-4" /> WhatsApp Phone
               </span>
-              <span className="font-medium flex items-center gap-1.5">
+              <span className="font-medium text-foreground flex items-center gap-1.5">
                 {employee.phone ? (
                   <>
                     <MessageCircle className="h-3.5 w-3.5 text-success" />
@@ -253,25 +253,25 @@ export default function EmployeeDetailPage({
               </span>
             </div>
 
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <Building className="h-4 w-4" /> Department
               </span>
-              <span className="font-medium">{employee.department || "—"}</span>
+              <span className="font-medium text-foreground">{employee.department || "—"}</span>
             </div>
 
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <Briefcase className="h-4 w-4" /> Designation
               </span>
-              <span className="font-medium">{employee.designation || "—"}</span>
+              <span className="font-medium text-foreground">{employee.designation || "—"}</span>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <span className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
                 <Calendar className="h-4 w-4" /> Joining Date
               </span>
-              <span className="font-medium">
+              <span className="font-medium text-foreground">
                 {employee.joiningDate ? formatDate(employee.joiningDate) : "—"}
               </span>
             </div>
@@ -284,8 +284,8 @@ export default function EmployeeDetailPage({
             <CardTitle className="text-base">Availability &amp; Leave Status</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="text-muted-foreground">Current Availability</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="text-muted-foreground text-xs sm:text-sm">Current Availability</span>
               <Badge
                 variant={
                   employee.availabilityStatus === "ACTIVE"
@@ -301,31 +301,31 @@ export default function EmployeeDetailPage({
 
             {employee.availabilityStatus === "ON_LEAVE" && (
               <>
-                <div className="flex items-center justify-between border-b pb-2">
-                  <span className="text-muted-foreground">Leave Window</span>
-                  <span className="font-medium">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+                  <span className="text-muted-foreground text-xs sm:text-sm">Leave Window</span>
+                  <span className="font-medium text-foreground">
                     {employee.leaveFrom ? formatDate(employee.leaveFrom) : "—"} to{" "}
                     {employee.leaveTo ? formatDate(employee.leaveTo) : "—"}
                   </span>
                 </div>
 
                 <div className="border-b pb-2">
-                  <p className="text-muted-foreground">Leave Reason</p>
-                  <p className="mt-1 font-medium">{employee.leaveReason || "No reason specified"}</p>
+                  <p className="text-muted-foreground text-xs sm:text-sm">Leave Reason</p>
+                  <p className="mt-1 font-medium text-foreground">{employee.leaveReason || "No reason specified"}</p>
                 </div>
               </>
             )}
 
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="text-muted-foreground">WhatsApp Notifications</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-2 gap-1">
+              <span className="text-muted-foreground text-xs sm:text-sm">WhatsApp Notifications</span>
               <Badge variant={employee.whatsappOptIn ? "success" : "secondary"}>
                 {employee.whatsappOptIn ? "Opted In" : "Opted Out"}
               </Badge>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Account Created</span>
-              <span className="font-medium">{formatDate(employee.createdAt)}</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <span className="text-muted-foreground text-xs sm:text-sm">Account Created</span>
+              <span className="font-medium text-foreground">{formatDate(employee.createdAt)}</span>
             </div>
           </CardContent>
         </Card>
@@ -333,13 +333,13 @@ export default function EmployeeDetailPage({
 
       {/* Assigned Tasks Section */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <CardTitle className="text-base">Assigned Tasks ({tasks.length})</CardTitle>
             <CardDescription>All tasks assigned to {employee.name}.</CardDescription>
           </div>
           {canEdit && (
-            <Button size="sm" variant="outline" onClick={() => setAssignOpen(true)}>
+            <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => setAssignOpen(true)}>
               <Plus className="mr-1 h-3.5 w-3.5" /> Assign Task
             </Button>
           )}
@@ -360,12 +360,12 @@ export default function EmployeeDetailPage({
               {tasks.map((task: any) => (
                 <div
                   key={task._id}
-                  className="flex flex-col gap-3 rounded-xl border p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 rounded-xl border p-3.5 sm:p-4 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1 min-w-0">
                     <Link
                       href={`/dashboard/tasks/${task._id}`}
-                      className="font-medium text-foreground hover:text-primary hover:underline"
+                      className="font-medium text-foreground hover:text-primary hover:underline block truncate"
                     >
                       {task.title}
                     </Link>
@@ -376,9 +376,9 @@ export default function EmployeeDetailPage({
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="w-24">
-                      <div className="mb-1 flex justify-between text-[11px] text-muted-foreground">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                    <div className="w-20 sm:w-24">
+                      <div className="mb-1 flex justify-between text-[10px] sm:text-[11px] text-muted-foreground">
                         <span>Progress</span>
                         <span>{task.completionPercent}%</span>
                       </div>
@@ -393,12 +393,13 @@ export default function EmployeeDetailPage({
                             ? "destructive"
                             : "default"
                       }
+                      className="text-xs shrink-0"
                     >
                       {task.status.replace("_", " ")}
                     </Badge>
 
                     <Link href={`/dashboard/tasks/${task._id}`}>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" className="h-8 px-3 text-xs">
                         View
                       </Button>
                     </Link>

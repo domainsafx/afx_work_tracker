@@ -16,20 +16,20 @@ export default function WorkLogPage() {
   const isAdmin = role === "ADMIN";
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 p-6">
+    <div className="mx-auto max-w-6xl space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="rounded-2xl border bg-card p-8 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
-            <ClipboardList className="h-7 w-7 text-primary" />
+      <div className="rounded-2xl border bg-card p-4 sm:p-6 md:p-8 shadow-sm">
+        <div className="flex items-center gap-3.5 sm:gap-4">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <ClipboardList className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
           </div>
 
           <div>
-            <h1 className="font-bold">
+            <h1 className="text-lg sm:text-xl font-bold">
               {isSuperAdmin ? "Employee Work Logs" : "Daily Work Log"}
             </h1>
 
-            <p className="mt-1 text-muted-foreground">
+            <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-muted-foreground">
               {isSuperAdmin
                 ? "View and monitor work logs submitted by employees."
                 : "Record today's completed work, blockers, and additional notes."}
@@ -44,27 +44,27 @@ export default function WorkLogPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="rounded-2xl border bg-card shadow-sm">
-                <div className="border-b px-6 py-5">
-                  <h2 className="text-lg font-semibold">
+                <div className="border-b px-4 py-3.5 sm:px-6 sm:py-5">
+                  <h2 className="text-base sm:text-lg font-semibold">
                     Submit Today's Work
                   </h2>
 
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Fill in your daily work summary before ending your workday.
                   </p>
                 </div>
 
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <WorkLogForm />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="rounded-2xl border bg-card p-6 shadow-sm">
-                <h3 className="font-semibold">Submission Guidelines</h3>
+            <div className="space-y-4 sm:space-y-6">
+              <div className="rounded-2xl border bg-card p-4 sm:p-6 shadow-sm">
+                <h3 className="text-sm sm:text-base font-semibold">Submission Guidelines</h3>
 
-                <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+                <ul className="mt-3 sm:mt-4 space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-muted-foreground">
                   <li>• Summarize the work completed today.</li>
                   <li>• Mention any blockers if applicable.</li>
                   <li>• Add additional notes if required.</li>
@@ -76,10 +76,10 @@ export default function WorkLogPage() {
                 </ul>
               </div>
 
-              <div className="rounded-2xl border bg-card p-6 shadow-sm">
-                <h3 className="font-semibold">Privacy</h3>
+              <div className="rounded-2xl border bg-card p-4 sm:p-6 shadow-sm">
+                <h3 className="text-sm sm:text-base font-semibold">Privacy</h3>
 
-                <p className="mt-3 text-sm text-muted-foreground">
+                <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm text-muted-foreground">
                   Only you and your reporting Admin/Super Admin can see your
                   work log. Other employees never see your entries.
                 </p>

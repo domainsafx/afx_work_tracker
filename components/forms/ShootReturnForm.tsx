@@ -51,14 +51,14 @@ export function ShootReturnForm({ log, onSuccess }: { log: IShootLog; onSuccess?
             <p className="text-sm font-medium">
               {item.equipmentName} <span className="text-xs text-muted-foreground">× {item.quantity}</span>
             </p>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
               <Select
                 value={conditions[item.equipment]?.returnCondition}
                 onValueChange={(v) =>
                   setConditions((prev) => ({ ...prev, [item.equipment]: { ...prev[item.equipment], returnCondition: v as Condition } }))
                 }
               >
-                <SelectTrigger className="h-8 w-36 text-xs"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8 w-full sm:w-36 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="OK">Returned OK</SelectItem>
                   <SelectItem value="DAMAGED">Damaged</SelectItem>
@@ -66,7 +66,7 @@ export function ShootReturnForm({ log, onSuccess }: { log: IShootLog; onSuccess?
                 </SelectContent>
               </Select>
               <Input
-                className="h-8 flex-1 min-w-40 text-xs"
+                className="h-8 flex-1 text-xs"
                 placeholder="Note (optional)"
                 value={conditions[item.equipment]?.returnNote}
                 onChange={(e) =>
@@ -79,10 +79,10 @@ export function ShootReturnForm({ log, onSuccess }: { log: IShootLog; onSuccess?
       </div>
       <div className="space-y-2">
         <Label>Overall return note (optional)</Label>
-        <Textarea rows={2} value={returnNote} onChange={(e) => setReturnNote(e.target.value)} placeholder="Anything else about this return" />
+        <Textarea rows={2} className="text-base sm:text-sm" value={returnNote} onChange={(e) => setReturnNote(e.target.value)} placeholder="Anything else about this return" />
       </div>
-      <Button onClick={submit} disabled={returnLog.isPending} className="w-full">
-        {returnLog.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={returnLog.isPending} className="w-full h-10 sm:h-9 font-medium">
+        {returnLog.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Confirm return
       </Button>
     </div>

@@ -1,14 +1,19 @@
+import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import Equipment from "@/models/Equipment";
 import ShootLog from "@/models/ShootLog";
 
 /** How much of each equipment item is currently checked out (status "OUT"), keyed by equipment id. */
-export async function getOutstandingQuantities(): Promise<Map<string, number>> {
-  const rows = await ShootLog.aggregate([
+export async function getOutstandingQuantities(session?: mongoose.ClientSession): Promise<Map<string, number>> {
+  const query = ShootLog.aggregate([
     { $match: { status: "OUT" } },
     { $unwind: "$items" },
     { $group: { _id: "$items.equipment", quantity: { $sum: "$items.quantity" } } },
   ]);
+  if (session) {
+    query.session(session);
+  }
+  const rows = await query;
   return new Map(rows.map((r: any) => [r._id.toString(), r.quantity]));
 }
 
@@ -55,8 +60,10 @@ export const equipmentService = {
     return Equipment.findByIdAndDelete(id).lean();
   },
 
-  async findByIds(ids: string[]) {
+  async findByIds(ids: string[], session?: mongoose.ClientSession) {
     await connectDB();
-    return Equipment.find({ _id: { $in: ids } }).lean();
+    const query = Equipment.find({ _id: { $in: ids } });
+    if (session) query.session(session);
+    return query.lean();
   },
 };

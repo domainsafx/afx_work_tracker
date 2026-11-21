@@ -83,7 +83,7 @@ export default function AvailabilityStatus() {
       onValueChange={handleChange}
       disabled={loading}
     >
-      <SelectTrigger className="w-[160px]">
+      <SelectTrigger className="w-[98px] min-[360px]:w-[115px] sm:w-[140px] md:w-[160px] h-9 sm:h-10 text-xs sm:text-sm px-2 sm:px-3">
         <SelectValue />
       </SelectTrigger>
 

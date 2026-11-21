@@ -33,7 +33,7 @@ export function TaskStageSelect({
 }) {
   return (
     <Select value={stage} onValueChange={(v) => onChange(v as TaskStage)} disabled={disabled}>
-      <SelectTrigger className="h-8 w-[190px] text-xs">
+      <SelectTrigger className="h-8 w-full sm:w-[190px] text-xs">
         <SelectValue>
           <TaskStageBadge stage={stage} />
         </SelectValue>

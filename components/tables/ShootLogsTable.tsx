@@ -53,26 +53,29 @@ export function ShootLogsTable({
         return (
           <div key={log._id} className="rounded-xl border border-border">
             <button
-              className="flex w-full items-center justify-between gap-3 p-3 text-left"
+              className="flex w-full items-center justify-between gap-3 p-3.5 text-left min-h-[48px]"
               onClick={() => setExpanded(isOpen ? null : log._id)}
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{log.shootTitle}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatDate(log.shootDate)}
-                  {log.location ? ` · ${log.location}` : ""}
-                  {showOwner ? ` · ${log.takenByName}` : ""} · {log.items.length} item(s)
+                <p className="text-xs text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                  <span>{formatDate(log.shootDate)}</span>
+                  {log.location && <span>· {log.location}</span>}
+                  {showOwner && <span>· {log.takenByName}</span>}
+                  <span>· {log.items.length} item(s)</span>
                 </p>
               </div>
-              <Badge variant={log.status === "OUT" ? "warning" : "success"}>{log.status === "OUT" ? "Out" : "Returned"}</Badge>
+              <Badge variant={log.status === "OUT" ? "warning" : "success"} className="shrink-0">
+                {log.status === "OUT" ? "Out" : "Returned"}
+              </Badge>
               {isOpen ? <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />}
             </button>
 
             {isOpen && (
-              <div className="space-y-3 border-t border-border p-3">
+              <div className="space-y-3 border-t border-border p-3.5 sm:p-4">
                 <div className="space-y-1.5">
                   {log.items.map((item) => (
-                    <div key={item.equipment} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-secondary/40 px-2.5 py-1.5 text-xs">
+                    <div key={item.equipment} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-secondary/40 px-3 py-2 text-xs">
                       <span className="font-medium">{item.equipmentName} × {item.quantity}</span>
                       {item.takeNote && <span className="text-muted-foreground">Taken: {item.takeNote}</span>}
                       {log.status === "RETURNED" && item.returnCondition && (
@@ -82,15 +85,15 @@ export function ShootLogsTable({
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Checked out {formatDateTime(log.checkedOutAt)}
-                  {log.returnedAt ? ` · Returned ${formatDateTime(log.returnedAt)}` : ""}
-                </p>
-                {log.returnNote && <p className="text-xs text-muted-foreground">Note: {log.returnNote}</p>}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <div>Checked out {formatDateTime(log.checkedOutAt)}</div>
+                  {log.returnedAt && <div>Returned {formatDateTime(log.returnedAt)}</div>}
+                  {log.returnNote && <div>Note: {log.returnNote}</div>}
+                </div>
 
                 {log.status === "OUT" && canReturn && (
-                  <Button size="sm" onClick={() => setReturning(log)}>
-                    <RotateCcw className="h-3.5 w-3.5" /> Log return
+                  <Button size="sm" className="h-10 w-full sm:w-auto" onClick={() => setReturning(log)}>
+                    <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Log return
                   </Button>
                 )}
                 {log.status === "RETURNED" && (

@@ -81,12 +81,13 @@ export default function WorkLogForm({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <label className="font-medium">Work Summary</label>
+        <label className="text-sm font-medium">Work Summary</label>
 
         <Textarea
-          rows={8}
+          rows={5}
+          className="mt-1.5 text-base sm:text-sm"
           value={summary}
           disabled={readOnly}
           onChange={(e) => setSummary(e.target.value)}
@@ -95,10 +96,11 @@ export default function WorkLogForm({
       </div>
 
       <div>
-        <label className="font-medium">Blockers</label>
+        <label className="text-sm font-medium">Blockers</label>
 
         <Textarea
-          rows={4}
+          rows={3}
+          className="mt-1.5 text-base sm:text-sm"
           value={blockers}
           disabled={readOnly}
           onChange={(e) => setBlockers(e.target.value)}
@@ -107,10 +109,11 @@ export default function WorkLogForm({
       </div>
 
       <div>
-        <label className="font-medium">Additional Notes</label>
+        <label className="text-sm font-medium">Additional Notes</label>
 
         <Textarea
-          rows={4}
+          rows={3}
+          className="mt-1.5 text-base sm:text-sm"
           value={notes}
           disabled={readOnly}
           onChange={(e) => setNotes(e.target.value)}
@@ -119,7 +122,7 @@ export default function WorkLogForm({
       </div>
 
       {!readOnly && (
-        <Button onClick={handleSubmit} disabled={loading}>
+        <Button onClick={handleSubmit} disabled={loading} className="w-full sm:w-auto h-11 sm:h-10 font-medium">
           {workLog ? "Update Work Log" : "Submit Work Log"}
         </Button>
       )}

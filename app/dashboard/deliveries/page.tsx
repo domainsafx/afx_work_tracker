@@ -65,10 +65,10 @@ export default function DeliveriesPage() {
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="min-w-56 space-y-2">
+            <div className="w-full sm:w-auto sm:min-w-56 space-y-2">
               <CardTitle>Select client</CardTitle>
               <Select value={clientId} onValueChange={setClientId} disabled={clientsLoading}>
-                <SelectTrigger><SelectValue placeholder="Choose a client" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-auto"><SelectValue placeholder="Choose a client" /></SelectTrigger>
                 <SelectContent>
                   {(clientsData?.items ?? []).map((client) => (
                     <SelectItem key={client._id} value={client._id}>{client.name}</SelectItem>

@@ -97,12 +97,12 @@ export default function HolidaysPage() {
             )}
             {upcoming.map((h) => (
               <div key={h._id} className="flex items-start justify-between gap-2 rounded-xl border border-border p-3">
-                <div>
-                  <p className="text-sm font-medium">{h.title}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{h.title}</p>
                   <p className="text-xs text-muted-foreground">{formatDate(h.date)}</p>
-                  {h.description && <p className="mt-1 text-xs text-muted-foreground">{h.description}</p>}
+                  {h.description && <p className="mt-1 text-xs text-muted-foreground break-words">{h.description}</p>}
                 </div>
-                <Badge variant={h.type === "PUBLIC" ? "default" : "secondary"}>{h.type}</Badge>
+                <Badge variant={h.type === "PUBLIC" ? "default" : "secondary"} className="shrink-0">{h.type}</Badge>
               </div>
             ))}
           </CardContent>

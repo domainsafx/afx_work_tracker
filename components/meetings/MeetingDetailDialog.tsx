@@ -99,28 +99,28 @@ export function MeetingDetailDialog({ meeting, onClose }: { meeting: IMeeting | 
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 pt-2">
             {canJoin && (
-              <Button onClick={handleJoin} disabled={join.isPending}>
+              <Button onClick={handleJoin} disabled={join.isPending} className="w-full sm:w-auto h-10 sm:h-9 font-medium">
                 {join.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Join meeting
               </Button>
             )}
             {meeting.meetingType === "EXTERNAL" && meeting.status !== "CANCELLED" && meeting.externalLink && (
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="w-full sm:w-auto h-10 sm:h-9 font-medium">
                 <a href={meeting.externalLink} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4" /> Open link
+                  <ExternalLink className="mr-1.5 h-4 w-4" /> Open link
                 </a>
               </Button>
             )}
             {canEnd && (
-              <Button variant="destructive" onClick={handleEnd} disabled={endMeeting.isPending}>
-                <PhoneOff className="h-4 w-4" /> End meeting
+              <Button variant="destructive" onClick={handleEnd} disabled={endMeeting.isPending} className="w-full sm:w-auto h-10 sm:h-9 font-medium">
+                <PhoneOff className="mr-1.5 h-4 w-4" /> End meeting
               </Button>
             )}
             {canCancel && (
-              <Button variant="ghost" onClick={handleCancel} disabled={cancelMeeting.isPending}>
-                <X className="h-4 w-4" /> Cancel meeting
+              <Button variant="ghost" onClick={handleCancel} disabled={cancelMeeting.isPending} className="w-full sm:w-auto h-10 sm:h-9 font-medium">
+                <X className="mr-1.5 h-4 w-4" /> Cancel meeting
               </Button>
             )}
           </div>

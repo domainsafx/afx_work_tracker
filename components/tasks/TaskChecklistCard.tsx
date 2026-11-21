@@ -132,7 +132,7 @@ export function TaskChecklistCard({
                 disabled={!canEdit || updateStage.isPending}
                 onClick={() => moveTo(s)}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-sm transition-colors",
+                  "flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 min-h-[44px] text-left text-sm transition-colors",
                   active
                     ? "border-primary/40 bg-primary/5 font-medium text-foreground"
                     : done
@@ -165,7 +165,7 @@ export function TaskChecklistCard({
                   variant="outline"
                   size="sm"
                   onClick={addLink}
-                  className="h-7 gap-1 text-xs text-primary"
+                  className="h-8 gap-1 text-xs text-primary px-2.5"
                 >
                   <Plus className="h-3.5 w-3.5" /> Add another
                 </Button>
@@ -241,8 +241,8 @@ export function TaskChecklistCard({
           </div>
 
           {canEdit && (
-            <Button size="sm" variant="outline" onClick={saveDetails} disabled={!detailsDirty || updateStage.isPending}>
-              <Save className="h-3.5 w-3.5" /> Save details
+            <Button size="sm" variant="outline" className="w-full sm:w-auto h-9 text-xs" onClick={saveDetails} disabled={!detailsDirty || updateStage.isPending}>
+              <Save className="h-3.5 w-3.5 mr-1" /> Save details
             </Button>
           )}
         </div>

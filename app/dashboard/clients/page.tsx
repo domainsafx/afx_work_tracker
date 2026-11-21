@@ -62,7 +62,7 @@ export default function ClientsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">
             Clients
@@ -79,7 +79,7 @@ export default function ClientsPage() {
             onOpenChange={setOpen}
           >
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Add client
               </Button>
@@ -106,7 +106,7 @@ export default function ClientsPage() {
 
       <Card>
         <CardHeader>
-          <div className="relative max-w-sm">
+          <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
             <Input

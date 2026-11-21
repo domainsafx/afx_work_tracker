@@ -108,89 +108,119 @@ export default function MessagesPage() {
       </div>
 
       {view === "chats" && (
-        <Card className="grid h-[calc(100vh-13rem)] grid-cols-1 overflow-hidden md:grid-cols-[300px_1fr]">
-          <div className="flex flex-col border-b border-border md:border-b-0 md:border-r">
-            <div className="flex items-center justify-between border-b border-border p-3">
-              <span className="text-sm font-semibold">Chats</span>
-              <NewChatDialog onStarted={(id) => setActiveId(id)} />
-            </div>
-            <ConversationList
-              conversations={convoData?.items}
-              isLoading={convosLoading}
-              activeId={activeId}
-              onSelect={setActiveId}
-            />
-          </div>
-
-          <div className="min-h-0">
-            {activeConvo ? (
-              <ChatWindow
-                title={activeConvo.displayName}
-                subtitle={
-                  activeConvo.type === "GROUP"
-                    ? "Everyone in the company"
-                    : capitalize(activeConvo.otherParticipant?.role ?? "")
-                }
-                isGroup={activeConvo.type === "GROUP"}
-                currentUserId={userId ?? ""}
-                messages={msgData?.items}
-                isLoading={msgsLoading}
-                senderNames={ownSenderNames}
-                onSend={(content) => sendMessage.mutate(content)}
-                isSending={sendMessage.isPending}
-                onStartCall={activeConvo.type === "DIRECT" ? handleStartCall : undefined}
-                isStartingCall={startCall.isPending}
-              />
-            ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-                <MessageSquare className="h-8 w-8 opacity-40" />
-                Pick a conversation, or start a new one.
+        <Card className="h-[calc(100dvh-12rem)] sm:h-[calc(100vh-13rem)] overflow-hidden">
+          <div className="grid h-full grid-cols-1 md:grid-cols-[300px_1fr]">
+            <div
+              className={cn(
+                "flex flex-col h-full border-b border-border md:border-b-0 md:border-r min-h-0",
+                activeId ? "hidden md:flex" : "flex"
+              )}
+            >
+              <div className="flex items-center justify-between border-b border-border p-3 shrink-0">
+                <span className="text-sm font-semibold">Chats</span>
+                <NewChatDialog onStarted={(id) => setActiveId(id)} />
               </div>
-            )}
+              <div className="flex-1 overflow-y-auto">
+                <ConversationList
+                  conversations={convoData?.items}
+                  isLoading={convosLoading}
+                  activeId={activeId}
+                  onSelect={setActiveId}
+                />
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                "h-full min-h-0",
+                !activeId ? "hidden md:block" : "block"
+              )}
+            >
+              {activeConvo ? (
+                <ChatWindow
+                  title={activeConvo.displayName}
+                  subtitle={
+                    activeConvo.type === "GROUP"
+                      ? "Everyone in the company"
+                      : capitalize(activeConvo.otherParticipant?.role ?? "")
+                  }
+                  isGroup={activeConvo.type === "GROUP"}
+                  currentUserId={userId ?? ""}
+                  messages={msgData?.items}
+                  isLoading={msgsLoading}
+                  senderNames={ownSenderNames}
+                  onBack={() => setActiveId(null)}
+                  onSend={(content) => sendMessage.mutate(content)}
+                  isSending={sendMessage.isPending}
+                  onStartCall={activeConvo.type === "DIRECT" ? handleStartCall : undefined}
+                  isStartingCall={startCall.isPending}
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+                  <MessageSquare className="h-8 w-8 opacity-40" />
+                  Pick a conversation, or start a new one.
+                </div>
+              )}
+            </div>
           </div>
         </Card>
       )}
 
       {view === "monitor" && canMonitor && (
-        <Card className="grid h-[calc(100vh-13rem)] grid-cols-1 overflow-hidden md:grid-cols-[300px_1fr]">
-          <div className="flex flex-col border-b border-border md:border-b-0 md:border-r">
-            <div className="border-b border-border p-3">
-              <span className="text-sm font-semibold">
-                {role === "SUPER_ADMIN" ? "All Employee & Admin Chats" : "All Employee Chats"}
-              </span>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {role === "SUPER_ADMIN"
-                  ? "Every conversation in the workspace."
-                  : "Any conversation that includes an employee."}
-              </p>
-            </div>
-            <ConversationList
-              conversations={monitorData?.items}
-              isLoading={monitorLoading}
-              activeId={activeMonitorId}
-              onSelect={setActiveMonitorId}
-              emptyLabel="No conversations to review yet."
-            />
-          </div>
-
-          <div className="min-h-0">
-            {activeMonitorConvo ? (
-              <ChatWindow
-                title={(activeMonitorConvo as any).displayName}
-                subtitle={activeMonitorConvo.type === "GROUP" ? "Everyone in the company" : "Direct chat"}
-                isGroup={activeMonitorConvo.type === "GROUP"}
-                currentUserId={userId ?? ""}
-                messages={monitorMsgData?.items}
-                isLoading={monitorMsgsLoading}
-                senderNames={monitorSenderNames}
-                readOnly
-              />
-            ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-                <ShieldCheck className="h-8 w-8 opacity-40" />
-                Select a conversation to review.
+        <Card className="h-[calc(100dvh-12rem)] sm:h-[calc(100vh-13rem)] overflow-hidden">
+          <div className="grid h-full grid-cols-1 md:grid-cols-[300px_1fr]">
+            <div
+              className={cn(
+                "flex flex-col h-full border-b border-border md:border-b-0 md:border-r min-h-0",
+                activeMonitorId ? "hidden md:flex" : "flex"
+              )}
+            >
+              <div className="border-b border-border p-3 shrink-0">
+                <span className="text-sm font-semibold">
+                  {role === "SUPER_ADMIN" ? "All Employee & Admin Chats" : "All Employee Chats"}
+                </span>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {role === "SUPER_ADMIN"
+                    ? "Every conversation in the workspace."
+                    : "Any conversation that includes an employee."}
+                </p>
               </div>
-            )}
+              <div className="flex-1 overflow-y-auto">
+                <ConversationList
+                  conversations={monitorData?.items}
+                  isLoading={monitorLoading}
+                  activeId={activeMonitorId}
+                  onSelect={setActiveMonitorId}
+                  emptyLabel="No conversations to review yet."
+                />
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                "h-full min-h-0",
+                !activeMonitorId ? "hidden md:block" : "block"
+              )}
+            >
+              {activeMonitorConvo ? (
+                <ChatWindow
+                  title={(activeMonitorConvo as any).displayName}
+                  subtitle={activeMonitorConvo.type === "GROUP" ? "Everyone in the company" : "Direct chat"}
+                  isGroup={activeMonitorConvo.type === "GROUP"}
+                  currentUserId={userId ?? ""}
+                  messages={monitorMsgData?.items}
+                  isLoading={monitorMsgsLoading}
+                  senderNames={monitorSenderNames}
+                  onBack={() => setActiveMonitorId(null)}
+                  readOnly
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+                  <ShieldCheck className="h-8 w-8 opacity-40" />
+                  Select a conversation to review.
+                </div>
+              )}
+            </div>
           </div>
         </Card>
       )}

@@ -1,18 +1,60 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
 import type { CallKind, ICall, ICallState } from "@/types";
 
-const INCOMING_POLL_MS = 3_000;
+const ACTIVE_TAB_POLL_MS = 5_000;
+const BACKGROUND_TAB_POLL_MS = 30_000;
 const CALL_STATE_POLL_MS = 2_500;
 
-/** Polls for calls currently ringing for me — drives the incoming-call prompt. */
+/**
+ * Adaptive polling + SSE push notifications for incoming calls.
+ * Drops from 3s fixed polling to 5s active / 30s background, with instant SSE delivery.
+ */
 export function useIncomingCalls() {
+  const qc = useQueryClient();
+  const eventSourceRef = useRef<EventSource | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("EventSource" in window)) return;
+
+    try {
+      const es = new EventSource("/api/calls/events");
+      eventSourceRef.current = es;
+
+      es.addEventListener("incoming_call", () => {
+        qc.invalidateQueries({ queryKey: ["calls", "incoming"] });
+      });
+
+      es.addEventListener("call_state", () => {
+        qc.invalidateQueries({ queryKey: ["calls", "incoming"] });
+      });
+
+      es.onerror = () => {
+        // Close on error; the query will continue with adaptive polling
+        es.close();
+      };
+
+      return () => {
+        es.close();
+      };
+    } catch {
+      // EventSource failed to initialize; adaptive polling serves as fallback
+    }
+  }, [qc]);
+
   return useQuery({
     queryKey: ["calls", "incoming"],
     queryFn: () => apiClient.get<{ items: (ICall & { caller: any })[] }>("/api/calls/incoming"),
-    refetchInterval: INCOMING_POLL_MS,
+    refetchInterval: () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        return BACKGROUND_TAB_POLL_MS;
+      }
+      return ACTIVE_TAB_POLL_MS;
+    },
+    refetchOnWindowFocus: true,
   });
 }
 

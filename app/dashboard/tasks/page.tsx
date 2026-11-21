@@ -38,7 +38,7 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">{role === "EMPLOYEE" ? "My tasks" : "All tasks"}</h1>
           <p className="text-sm text-muted-foreground">
@@ -47,19 +47,21 @@ export default function TasksPage() {
               : "View all assigned tasks along with employee names, assign new work, and monitor progress."}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1 rounded-xl border border-border p-1">
-            <Button size="sm" variant={view === "list" ? "default" : "ghost"} onClick={() => setView("list")}>
-              <List className="h-4 w-4" /> List
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex gap-1 rounded-xl border border-border p-1 bg-secondary/30">
+            <Button size="sm" variant={view === "list" ? "default" : "ghost"} onClick={() => setView("list")} className="h-8 text-xs">
+              <List className="h-4 w-4 mr-1" /> List
             </Button>
-            <Button size="sm" variant={view === "calendar" ? "default" : "ghost"} onClick={() => setView("calendar")}>
-              <CalendarDays className="h-4 w-4" /> Calendar
+            <Button size="sm" variant={view === "calendar" ? "default" : "ghost"} onClick={() => setView("calendar")} className="h-8 text-xs">
+              <CalendarDays className="h-4 w-4 mr-1" /> Calendar
             </Button>
           </div>
           {canAssign && (
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4" /> Assign task</Button>
+                <Button size="sm" className="h-8 text-xs">
+                  <Plus className="h-4 w-4 mr-1" /> Assign task
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -75,12 +77,12 @@ export default function TasksPage() {
 
       {view === "list" ? (
         <Card>
-          <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="relative max-w-sm flex-1">
+          <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative w-full lg:max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input className="pl-9" placeholder="Search tasks..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-2 w-full lg:w-auto">
               {role !== "EMPLOYEE" && (
                 <Select
                   value={employeeId}
@@ -88,7 +90,7 @@ export default function TasksPage() {
                     setEmployeeId(value === "ALL" ? undefined : value)
                   }
                 >
-                  <SelectTrigger className="w-56">
+                  <SelectTrigger className="flex-1 sm:flex-none sm:w-48 lg:w-52">
                     <SelectValue placeholder="All Employees" />
                   </SelectTrigger>
 
@@ -104,7 +106,7 @@ export default function TasksPage() {
                 </Select>
               )}
               <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+                <SelectTrigger className="flex-1 sm:flex-none sm:w-36"><SelectValue placeholder="Status" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PENDING">Pending</SelectItem>
                   <SelectItem value="NOTICED">Noticed</SelectItem>
@@ -116,7 +118,7 @@ export default function TasksPage() {
                 </SelectContent>
               </Select>
               <Select value={priority} onValueChange={setPriority}>
-                <SelectTrigger className="w-36"><SelectValue placeholder="Priority" /></SelectTrigger>
+                <SelectTrigger className="flex-1 sm:flex-none sm:w-32"><SelectValue placeholder="Priority" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="LOW">Low</SelectItem>
                   <SelectItem value="MEDIUM">Medium</SelectItem>

@@ -18,9 +18,9 @@ export function AdminOverview({ role }: { role?: string }) {
 
   if (isLoading || !stats) {
     return (
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-24" />
+          <Skeleton key={i} className="h-20 sm:h-24 rounded-xl" />
         ))}
       </div>
     );
@@ -59,7 +59,7 @@ export function AdminOverview({ role }: { role?: string }) {
 
       <TeamTodayPanel />
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
         <StatCard label="Total employees" value={stats.totalEmployees} icon={Users} />
         <StatCard label="Active employees" value={stats.activeEmployees} icon={UserCheck} tone="success" />
         <StatCard label="Inactive employees" value={stats.inactiveEmployees} icon={UserX} tone="destructive" />

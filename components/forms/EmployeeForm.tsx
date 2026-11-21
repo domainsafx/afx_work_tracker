@@ -40,7 +40,7 @@ export function EmployeeForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>First name</Label>
           <Input {...register("firstName")} placeholder="Jane" />
@@ -59,7 +59,7 @@ export function EmployeeForm({ onDone }: { onDone: () => void }) {
         {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Temporary password</Label>
           <Input type="password" {...register("password")} placeholder="Min. 8 characters" />
@@ -77,7 +77,7 @@ export function EmployeeForm({ onDone }: { onDone: () => void }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Department</Label>
           <Input {...register("department")} placeholder="Engineering" />

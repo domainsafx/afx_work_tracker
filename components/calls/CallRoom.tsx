@@ -136,27 +136,42 @@ export function CallRoom({ roomId, currentUserId }: { roomId: string; currentUse
         )}
       </div>
 
-      <div className="flex items-center justify-center gap-3 border-t border-border p-4">
+      <div className="flex items-center justify-center gap-4 border-t border-border p-4 bg-card/60 backdrop-blur-sm">
         <Button
           variant="outline"
           size="icon"
           onClick={toggleMic}
-          className={cn(!micEnabled && "bg-destructive/10 text-destructive")}
+          className={cn(
+            "h-12 w-12 rounded-full shadow-sm transition-transform active:scale-95",
+            !micEnabled && "bg-destructive/10 text-destructive border-destructive/40"
+          )}
+          title={micEnabled ? "Mute microphone" : "Unmute microphone"}
         >
-          {micEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+          {micEnabled ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
         </Button>
         {call.callType === "VIDEO" && (
           <Button
             variant="outline"
             size="icon"
             onClick={toggleCamera}
-            className={cn(!cameraEnabled && "bg-destructive/10 text-destructive")}
+            className={cn(
+              "h-12 w-12 rounded-full shadow-sm transition-transform active:scale-95",
+              !cameraEnabled && "bg-destructive/10 text-destructive border-destructive/40"
+            )}
+            title={cameraEnabled ? "Turn off camera" : "Turn on camera"}
           >
-            {cameraEnabled ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
+            {cameraEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
           </Button>
         )}
-        <Button variant="destructive" size="icon" onClick={handleLeave} disabled={leaveCall.isPending}>
-          <PhoneOff className="h-4 w-4" />
+        <Button
+          variant="destructive"
+          size="icon"
+          className="h-12 w-12 rounded-full shadow-sm transition-transform active:scale-95"
+          onClick={handleLeave}
+          disabled={leaveCall.isPending}
+          title="Leave call"
+        >
+          <PhoneOff className="h-5 w-5" />
         </Button>
       </div>
     </div>

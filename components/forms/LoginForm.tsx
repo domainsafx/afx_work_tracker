@@ -81,15 +81,15 @@ export function LoginForm() {
             aria-label={showPassword ? "Hide password" : "Show password"}
             aria-pressed={showPassword}
             tabIndex={-1}
-            className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
+            className="absolute right-0 top-0 flex h-11 sm:h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
         {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
       </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button type="submit" className="w-full h-11 sm:h-10 font-medium" disabled={loading}>
+        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Sign in
       </Button>
     </form>

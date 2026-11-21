@@ -48,31 +48,67 @@ export function EquipmentCatalogManager() {
         {!isLoading && (data?.items ?? []).length === 0 && (
           <p className="text-sm text-muted-foreground">No equipment added yet.</p>
         )}
-        <div className="max-h-56 space-y-1.5 overflow-y-auto">
+        <div className="max-h-64 space-y-2 overflow-y-auto pr-0.5">
           {(data?.items ?? []).map((item) => (
-            <div key={item._id} className="flex items-center justify-between gap-2 rounded-lg border border-border px-2.5 py-1.5 text-sm">
+            <div
+              key={item._id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-lg border border-border p-3 text-sm bg-card"
+            >
               <div className="min-w-0 flex-1">
-                <span className="font-medium">{item.name}</span>
-                <span className="ml-2 text-xs text-muted-foreground">{item.category}{item.code ? ` · ${item.code}` : ""}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium truncate">{item.name}</span>
+                  <Badge variant={item.isActive ? "success" : "secondary"} className="shrink-0 text-[10px] px-1.5 py-0">
+                    {item.isActive ? "Active" : "Retired"}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {item.category}{item.code ? ` · ${item.code}` : ""}
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Button size="icon" variant="outline" className="h-6 w-6" onClick={() => adjustQuantity(item._id, item.totalQuantity, -1)}>
-                  <Minus className="h-3 w-3" />
-                </Button>
-                <span className="w-16 text-center text-xs text-muted-foreground">
-                  {item.availableQuantity ?? item.totalQuantity}/{item.totalQuantity}
-                </span>
-                <Button size="icon" variant="outline" className="h-6 w-6" onClick={() => adjustQuantity(item._id, item.totalQuantity, 1)}>
-                  <Plus className="h-3 w-3" />
-                </Button>
+
+              <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-0.5">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7"
+                    onClick={() => adjustQuantity(item._id, item.totalQuantity, -1)}
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </Button>
+                  <span className="w-14 text-center text-xs font-medium">
+                    {item.availableQuantity ?? item.totalQuantity}/{item.totalQuantity}
+                  </span>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7"
+                    onClick={() => adjustQuantity(item._id, item.totalQuantity, 1)}
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs"
+                    onClick={() => toggleActive(item._id, item.isActive)}
+                  >
+                    {item.isActive ? "Retire" : "Activate"}
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    onClick={() => remove(item._id)}
+                    title="Delete"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <Badge variant={item.isActive ? "success" : "secondary"}>{item.isActive ? "Active" : "Retired"}</Badge>
-              <Button size="sm" variant="outline" onClick={() => toggleActive(item._id, item.isActive)}>
-                {item.isActive ? "Retire" : "Activate"}
-              </Button>
-              <Button size="icon" variant="ghost" onClick={() => remove(item._id)} title="Delete">
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
             </div>
           ))}
         </div>

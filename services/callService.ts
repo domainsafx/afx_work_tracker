@@ -3,6 +3,7 @@ import Call from "@/models/Call";
 import CallSignal from "@/models/CallSignal";
 import User from "@/models/User";
 import type { CallKind, SignalType } from "@/types";
+import { callEvents, CALL_EVENT_TYPES } from "./callEvents";
 
 export const callService = {
   /** Starts a 1:1 call — rings the other user. */
@@ -33,7 +34,7 @@ export const callService = {
     if (existing) return existing;
 
     const now = new Date();
-    return Call.create({
+    const call = await Call.create({
       type: "DIRECT",
       callType: input.callType,
       conversation: input.conversationId,
@@ -45,6 +46,15 @@ export const callService = {
         { user: input.targetUserId, status: "RINGING" },
       ],
     });
+
+    callEvents.emit(CALL_EVENT_TYPES.INCOMING_CALL, {
+      targetUserId: input.targetUserId,
+      callId: call._id.toString(),
+      callType: input.callType,
+      initiatorId: input.initiatorId,
+    });
+
+    return call;
   },
 
   /** Joins (or creates) the call room backing an IN_APP meeting. */
@@ -116,6 +126,7 @@ export const callService = {
     participant.joinedAt = new Date();
     if (call.status === "RINGING") call.status = "ACTIVE";
     await call.save();
+    callEvents.emit(CALL_EVENT_TYPES.CALL_STATE_CHANGED, { callId, status: call.status });
     return call;
   },
 
@@ -137,6 +148,7 @@ export const callService = {
       call.endedAt = new Date();
     }
     await call.save();
+    callEvents.emit(CALL_EVENT_TYPES.CALL_STATE_CHANGED, { callId, status: call.status });
     return call;
   },
 
@@ -160,6 +172,7 @@ export const callService = {
 
     await call.save();
     await CallSignal.deleteMany({ call: call._id });
+    callEvents.emit(CALL_EVENT_TYPES.CALL_STATE_CHANGED, { callId, status: call.status });
     return call;
   },
 

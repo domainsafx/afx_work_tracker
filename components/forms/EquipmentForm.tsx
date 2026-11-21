@@ -44,7 +44,7 @@ export function EquipmentForm({ onSuccess }: { onSuccess?: () => void }) {
         <Label>Name</Label>
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Sony A7S III" />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-2">
           <Label>Category</Label>
           <Select value={category} onValueChange={(v) => setCategory(v as (typeof CATEGORIES)[number])}>
@@ -72,10 +72,10 @@ export function EquipmentForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
       <div className="space-y-2">
         <Label>Notes (optional)</Label>
-        <Textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any extra details" />
+        <Textarea rows={2} className="text-base sm:text-sm" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any extra details" />
       </div>
-      <Button onClick={submit} disabled={createEquipment.isPending} className="w-full">
-        {createEquipment.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={createEquipment.isPending} className="w-full h-10 sm:h-9">
+        {createEquipment.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Add equipment
       </Button>
     </div>

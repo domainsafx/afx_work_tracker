@@ -7,7 +7,13 @@ export function useNotifications() {
   return useQuery({
     queryKey: ["notifications"],
     queryFn: () => apiClient.get<{ items: any[] }>("/api/notifications"),
-    refetchInterval: 30_000,
+    refetchInterval: () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        return 60_000;
+      }
+      return 30_000;
+    },
+    refetchOnWindowFocus: true,
   });
 }
 

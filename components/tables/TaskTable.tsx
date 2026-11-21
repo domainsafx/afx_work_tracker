@@ -104,11 +104,132 @@ export function TaskTable({
   }
 
   return (
-    <Table>
+    <>
+      {/* Mobile Card View (< md) */}
+      <div className="space-y-3 md:hidden">
+        {tasks.map((task) => {
+          const assignedId = task.assignedTo?._id ?? task.assignedTo;
+          const isAssignee = assignedId === userId;
+          const canUpdate =
+            ((role === "EMPLOYEE" && isAssignee) ||
+              role === "ADMIN" ||
+              role === "SUPER_ADMIN") &&
+            task.status !== "COMPLETED" &&
+            task.status !== "CANCELLED";
+          const canTransfer =
+            role === "EMPLOYEE" &&
+            isAssignee &&
+            task.status !== "COMPLETED" &&
+            task.status !== "CANCELLED";
+          const isClosed = task.status === "COMPLETED" || task.status === "CANCELLED";
+
+          return (
+            <div key={task._id} className="rounded-xl border border-border bg-card p-4 space-y-3 shadow-xs">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/dashboard/tasks/${task._id}`}
+                    className="font-semibold text-foreground hover:text-primary hover:underline text-sm block"
+                  >
+                    {task.title}
+                  </Link>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {task.department}
+                    {showEmployee && task.assignedTo?.name && ` · ${task.assignedTo.name}`}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <Badge variant={PRIORITY_TONE[task.priority]} className="text-[10px] px-1.5 py-0">
+                    {task.priority}
+                  </Badge>
+                  {statusMode === "checklist" ? (
+                    <TaskStageBadge stage={task.stage ?? "CHECKLIST"} />
+                  ) : (
+                    <Badge variant={STATUS_TONE[task.status]} className="text-[10px] px-1.5 py-0">
+                      {STATUS_LABEL[task.status] ?? task.status.replace("_", " ")}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Progress and Deadline */}
+              <div className="space-y-1.5 border-y border-border/60 py-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Progress</span>
+                  <span className="font-medium text-foreground">{task.completionPercent}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all rounded-full"
+                    style={{ width: `${task.completionPercent}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <span className="text-muted-foreground">Deadline:</span>
+                  <span className={isOverdue(task.deadline) && task.status !== "COMPLETED" ? "text-destructive font-medium" : "text-foreground"}>
+                    {formatDate(task.deadline)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
+                {canUpdate && !isClosed && (
+                  <Link href={`/dashboard/tasks/${task._id}`} className="flex-1 min-w-[120px]">
+                    <Button size="sm" variant="outline" className="w-full text-xs h-9">
+                      <Pencil className="h-3.5 w-3.5 mr-1" /> Update Task
+                    </Button>
+                  </Link>
+                )}
+
+                {canTransfer && !isClosed && (
+                  <TransferTaskModal
+                    taskId={task._id}
+                    taskTitle={task.title}
+                    excludeUserId={userId}
+                  />
+                )}
+
+                {(role === "ADMIN" || role === "SUPER_ADMIN") && (
+                  <div className="flex items-center gap-1.5">
+                    <EditTaskModal
+                      task={task}
+                      trigger={
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-9 w-9"
+                          aria-label="Edit task"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
+
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="h-9 w-9"
+                      aria-label="Delete task"
+                      onClick={() => deleteTask(task._id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View (>= md) */}
+      <div className="hidden md:block">
+        <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Task</TableHead>
-          {showEmployee && <TableHead>Employee</TableHead>}
+          <TableHead>Employee</TableHead>
           <TableHead>Priority</TableHead>
           <TableHead>{statusMode === "checklist" ? "Checklist" : "Status"}</TableHead>
           <TableHead>Progress</TableHead>
@@ -225,6 +346,8 @@ export function TaskTable({
           );
         })}
       </TableBody>
-    </Table>
+        </Table>
+      </div>
+    </>
   );
 }

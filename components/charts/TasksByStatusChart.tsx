@@ -8,7 +8,7 @@ export function TasksByStatusChart({ data }: { data: { name: string; value: numb
   return (
     <ResponsiveContainer width="100%" height={260}>
       <PieChart>
-        <Pie data={data} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} paddingAngle={3}>
+        <Pie data={data} dataKey="value" nameKey="name" innerRadius="50%" outerRadius="75%" paddingAngle={3}>
           {data.map((_, i) => (
             <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="none" />
           ))}

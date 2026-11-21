@@ -41,54 +41,24 @@ async function getNextEmployeeId() {
   return `EMP-${String(max + 1).padStart(4, "0")}`;
 }
 
+import { reconciliationService } from "./reconciliationService";
+
 /**
- * Lazily keeps `availabilityStatus` in sync with the user's approved leave
- * window (leaveFrom/leaveTo), called before every read instead of running a
- * cron job:
- *  - promotes a user into "ON_LEAVE" once today reaches their approved
- *    leaveFrom date (leave should only *reflect* on the approved date, not
- *    the moment it was approved — see leaveService.decide)
- *  - demotes them back out of "ON_LEAVE" once leaveTo has passed
+ * Reconciles leave windows via the reconciliation service.
+ * Separated from ordinary read paths for optimal database performance.
  */
 async function reconcileLeaveWindows() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  await Promise.all([
-    User.updateMany(
-      {
-        availabilityStatus: { $ne: "ON_LEAVE" },
-        leaveFrom: { $lte: today },
-        leaveTo: { $gte: today },
-      },
-      { $set: { availabilityStatus: "ON_LEAVE", availability: "ON_LEAVE" } }
-    ),
-    User.updateMany(
-      {
-        availabilityStatus: "ON_LEAVE",
-        leaveTo: { $lt: today },
-      },
-      {
-        $set: {
-          availabilityStatus: "ACTIVE",
-          availability: "AVAILABLE",
-          leaveFrom: null,
-          leaveTo: null,
-          leaveReason: "",
-        },
-      }
-    ),
-  ]);
+  return reconciliationService.reconcileLeaveWindows();
 }
 
 /**
  * Repository-style data access layer for Users.
  */
 export const userService = {
+  reconcileLeaveWindows,
+
   async list(options: UserQueryOptions = {}) {
     await connectDB();
-
-    await reconcileLeaveWindows();
 
     const {
       search,
@@ -142,17 +112,11 @@ export const userService = {
 
   async findById(id: string) {
     await connectDB();
-
-    await reconcileLeaveWindows();
-
     return User.findById(id).lean();
   },
 
   async findByEmail(email: string) {
     await connectDB();
-
-    await reconcileLeaveWindows();
-
     return User.findOne({
       email: email.toLowerCase(),
     }).lean();

@@ -49,11 +49,11 @@ export function LeaveApproverSettings() {
             Currently: <span className="font-medium text-foreground">{approverData.leaveApproverName}</span>
           </p>
         )}
-        <div className="flex flex-wrap items-end gap-3">
-          <div className="min-w-56 space-y-2">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+          <div className="w-full sm:w-auto sm:min-w-56 space-y-2">
             <Label>Admin</Label>
             <Select value={selected} onValueChange={setSelected} disabled={approverLoading}>
-              <SelectTrigger><SelectValue placeholder="Select an admin" /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-auto"><SelectValue placeholder="Select an admin" /></SelectTrigger>
               <SelectContent>
                 {(adminsData?.items ?? []).map((admin: any) => (
                   <SelectItem key={admin._id} value={admin._id}>{admin.name}</SelectItem>
@@ -61,8 +61,8 @@ export function LeaveApproverSettings() {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={save} disabled={setApprover.isPending}>
-            {setApprover.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          <Button onClick={save} disabled={setApprover.isPending} className="w-full sm:w-auto h-10 sm:h-9">
+            {setApprover.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save
           </Button>
         </div>

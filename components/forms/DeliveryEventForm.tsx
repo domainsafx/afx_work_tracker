@@ -74,15 +74,15 @@ export function DeliveryEventForm({
       </div>
       <div className="space-y-2">
         <Label>Description (optional)</Label>
-        <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What's being delivered, and any other details" />
+        <Textarea rows={2} className="text-base sm:text-sm" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What's being delivered, and any other details" />
       </div>
       <div className="flex gap-2">
-        <Button onClick={submit} disabled={pending} className="flex-1">
-          {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+        <Button onClick={submit} disabled={pending} className="flex-1 h-10 sm:h-9 font-medium">
+          {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isEdit ? "Save changes" : "Add to calendar"}
         </Button>
         {isEdit && (
-          <Button variant="outline" onClick={remove} disabled={pending}>
+          <Button variant="outline" className="h-10 sm:h-9 px-3 text-destructive" onClick={remove} disabled={pending}>
             <Trash2 className="h-4 w-4" />
           </Button>
         )}

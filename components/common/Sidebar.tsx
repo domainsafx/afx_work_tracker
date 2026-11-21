@@ -82,7 +82,7 @@ function NavLink({
       href={item.href}
       onClick={onNavigate}
       className={cn(
-        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+        "flex items-center gap-3 rounded-xl px-3 py-3 md:py-2.5 text-sm font-medium transition-colors",
         active
           ? "bg-primary text-primary-foreground shadow-sm"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -148,16 +148,18 @@ export function Sidebar({ role, onNavigate }: SidebarProps) {
   const isSuperAdmin = role === "SUPER_ADMIN";
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-border bg-card p-4">
-      <div className="mb-6 flex items-center gap-2.5 px-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-sm">
-          AFX
+    <aside className="flex h-full w-full md:w-64 flex-col border-r-0 md:border-r border-border bg-card p-4">
+      {!onNavigate && (
+        <div className="mb-6 flex items-center gap-2.5 px-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-sm">
+            AFX
+          </div>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold text-foreground">AFX Digital</p>
+            <p className="text-xs text-muted-foreground">Work Tracker</p>
+          </div>
         </div>
-        <div className="leading-tight">
-          <p className="text-sm font-semibold text-foreground">AFX Digital</p>
-          <p className="text-xs text-muted-foreground">Work Tracker</p>
-        </div>
-      </div>
+      )}
 
       <nav className="flex flex-1 flex-col gap-2 overflow-y-auto">
         <NavSection items={WORKSPACE_NAV} role={role} pathname={pathname} unreadMessages={unreadMessages} onNavigate={onNavigate} />

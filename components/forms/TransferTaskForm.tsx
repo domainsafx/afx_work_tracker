@@ -71,7 +71,7 @@ export function TransferTaskForm({
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           rows={3}
-          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           placeholder="Why does this task need to be transferred?"
         />
       </div>
@@ -82,8 +82,8 @@ export function TransferTaskForm({
           : "This request needs Admin approval."}
       </p>
 
-      <Button onClick={submit} disabled={requestTransfer.isPending} className="w-full">
-        {requestTransfer.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={requestTransfer.isPending} className="w-full h-10 sm:h-9 font-medium">
+        {requestTransfer.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Submit transfer request
       </Button>
     </div>

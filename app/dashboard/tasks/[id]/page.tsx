@@ -58,12 +58,12 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
       />
 
       <Card>
-        <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <CardTitle className="text-lg">{task.title}</CardTitle>
             <CardDescription>{task.department} · Assigned to {task.assignedTo?.name}</CardDescription>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <Badge variant={task.priority === "HIGH" ? "destructive" : task.priority === "MEDIUM" ? "warning" : "success"}>
               {task.priority}
             </Badge>
@@ -87,7 +87,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">Description : {task.description}</p>
 
-          <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 text-sm md:grid-cols-4 border-y border-border/60 py-3">
             <div>
               <p className="text-xs text-muted-foreground">Start date</p>
               <p className="font-medium">{formatDate(task.startDate)}</p>

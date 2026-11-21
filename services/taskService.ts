@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db";
 import Task from "@/models/Task";
 import TaskUpdate from "@/models/TaskUpdate";
 import type { TaskPriority, TaskStatus } from "@/types";
+import { reconciliationService } from "./reconciliationService";
 
 export interface TaskQueryOptions {
   search?: string;
@@ -17,53 +18,15 @@ export interface TaskQueryOptions {
 
 export const taskService = {
 
+  /**
+   * Reconciles overdue tasks via the reconciliation service.
+   * Separated from ordinary read paths for optimal database performance.
+   */
   async markOverdueTasks() {
-    await connectDB();
-
-    // Start of today in UTC
-    const now = new Date();
-
-    const todayUTC = new Date(
-      Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate()
-      )
-    );
-
-    await Task.updateMany(
-      {
-        deadline: {
-          $lt: todayUTC,
-        },
-        status: {
-          $nin: [
-            "COMPLETED",
-            "DELAYED",
-            "CANCELLED",
-          ],
-        },
-      },
-      {
-        $set: {
-          status: "DELAYED",
-        },
-        $push: {
-          timeline: {
-            timestamp: new Date(),
-            author: null,
-            authorName: "System",
-            action:
-              "Task automatically marked as delayed because the deadline has passed.",
-          },
-        },
-      }
-    );
+    return reconciliationService.reconcileOverdueTasks();
   },
+
   async list(options: TaskQueryOptions = {}) {
-
-    await this.markOverdueTasks();
-
     await connectDB();
     const { search, status, priority, department, assignedTo, page = 1, limit = 20, today } = options;
 
@@ -450,8 +413,6 @@ export const taskService = {
    * Scoped by the same visibility rules as the list endpoint (employees only see their own).
    */
   async listForCalendar(options: { assignedTo?: string } = {}) {
-    await this.markOverdueTasks();
-
     await connectDB();
     const filter: Record<string, unknown> = {};
     if (options.assignedTo) filter.assignedTo = options.assignedTo;
@@ -576,8 +537,6 @@ export const taskService = {
   },
 
   async statsForAdmin() {
-    await this.markOverdueTasks();
-
     await connectDB();
     const [
       totalEmployees,
@@ -616,7 +575,6 @@ export const taskService = {
   },
 
   async statsForEmployee(employeeId: string) {
-    await this.markOverdueTasks();
     await connectDB();
     const now = new Date();
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));

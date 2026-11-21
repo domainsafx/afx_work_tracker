@@ -5,8 +5,8 @@ import User from "@/models/User";
 import type { UserRole } from "@/types";
 import { getWorkLogVisibleRoles } from "@/utils/permissions";
 
-/** How far back a work log can still be created/edited. */
-export const WORK_LOG_EDIT_WINDOW_DAYS = 3;
+/** How far back a work log can still be created/edited. Aligned with 5-day UI window. */
+export const WORK_LOG_EDIT_WINDOW_DAYS = 5;
 
 export interface WorkLogQueryOptions {
   employee?: string;
@@ -478,6 +478,18 @@ export const workLogService = {
       input.date ?? new Date()
     );
 
+    const today = startOfDay(new Date());
+    const earliestEditable = new Date(today);
+    earliestEditable.setUTCDate(earliestEditable.getUTCDate() - WORK_LOG_EDIT_WINDOW_DAYS);
+
+    if (targetDate.getTime() < earliestEditable.getTime()) {
+      throw new Error(`Work logs cannot be created or edited more than ${WORK_LOG_EDIT_WINDOW_DAYS} days in the past.`);
+    }
+
+    if (targetDate.getTime() > today.getTime()) {
+      throw new Error("Cannot create a work log for a future date.");
+    }
+
     /*
      * IMPORTANT:
      * Do not allow a work log to be created
@@ -570,6 +582,14 @@ export const workLogService = {
       throw new Error(
         "Work log not found"
       );
+    }
+
+    const today = startOfDay(new Date());
+    const earliestEditable = new Date(today);
+    earliestEditable.setUTCDate(earliestEditable.getUTCDate() - WORK_LOG_EDIT_WINDOW_DAYS);
+
+    if (existing.date && startOfDay(existing.date).getTime() < earliestEditable.getTime()) {
+      throw new Error(`Work logs cannot be edited more than ${WORK_LOG_EDIT_WINDOW_DAYS} days in the past.`);
     }
 
     /*

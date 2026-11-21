@@ -57,10 +57,10 @@ export function HolidayForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
       <div className="space-y-2">
         <Label>Description (optional)</Label>
-        <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Any extra details" />
+        <Textarea rows={2} className="text-base sm:text-sm" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Any extra details" />
       </div>
-      <Button onClick={submit} disabled={createHoliday.isPending} className="w-full">
-        {createHoliday.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={createHoliday.isPending} className="w-full h-10 sm:h-9 font-medium">
+        {createHoliday.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Add holiday
       </Button>
     </div>

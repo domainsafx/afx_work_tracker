@@ -171,7 +171,7 @@ export function ForgotPasswordForm() {
         </div>
         <Button
           type="submit"
-          className="w-full"
+          className="w-full h-11 sm:h-10 font-medium"
           disabled={sendingOtp}
         >
           {sendingOtp && (
@@ -212,7 +212,7 @@ export function ForgotPasswordForm() {
         </div>
         <Button
           type="submit"
-          className="w-full"
+          className="w-full h-11 sm:h-10 font-medium"
           disabled={verifyingOtp}
         >
           {verifyingOtp && (
@@ -256,7 +256,7 @@ export function ForgotPasswordForm() {
               aria-label={showPassword ? "Hide password" : "Show password"}
               aria-pressed={showPassword}
               tabIndex={-1}
-              className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
+              className="absolute right-0 top-0 flex h-11 sm:h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -267,7 +267,7 @@ export function ForgotPasswordForm() {
         </div>
         <Button
           type="submit"
-          className="w-full"
+          className="w-full h-11 sm:h-10 font-medium"
           disabled={resettingPassword}
         >
           {resettingPassword && (

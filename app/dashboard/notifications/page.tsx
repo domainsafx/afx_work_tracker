@@ -14,13 +14,13 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">Notifications</h1>
           <p className="text-sm text-muted-foreground">Stay on top of task activity.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => markAll.mutate()}>
-          <CheckCheck className="h-4 w-4" /> Mark all read
+        <Button variant="outline" size="sm" className="h-9 w-full sm:w-auto self-start sm:self-auto" onClick={() => markAll.mutate()}>
+          <CheckCheck className="mr-1.5 h-4 w-4" /> Mark all read
         </Button>
       </div>
 
@@ -39,9 +39,9 @@ export default function NotificationsPage() {
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
                 <Bell className="h-4 w-4" />
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{n.title}</p>
-                <p className="text-sm text-muted-foreground">{n.message}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium break-words">{n.title}</p>
+                <p className="text-sm text-muted-foreground break-words">{n.message}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{formatDateTime(n.createdAt)}</p>
               </div>
             </div>

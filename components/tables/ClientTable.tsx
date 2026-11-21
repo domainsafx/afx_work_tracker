@@ -89,102 +89,215 @@ export function ClientTable({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Client</TableHead>
-          <TableHead>Reference links</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Added by</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+    <>
+      {/* Mobile Card List (shown on < md screens) */}
+      <div className="space-y-3 md:hidden">
         {clients.map((client) => (
-          <TableRow key={client._id}>
-            <TableCell className="font-medium">
-              {client.name}
-              {client.description && (
-                <div className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
-                  {client.description}
-                </div>
-              )}
-            </TableCell>
-            <TableCell>
-              <div className="flex flex-wrap items-center gap-1.5">
-                <LinkDot present={!!client.deckLink} label="Deck" />
-                <LinkDot present={!!client.deliverablesLink} label="Deliverables" />
-                <LinkDot present={!!client.contentLink} label="Content" />
-                {isSuperAdmin && (
-                  <span
-                    title={client.mouLink ? "MOU link added" : "No MOU link yet"}
-                    className={
-                      "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium " +
-                      (client.mouLink ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground")
-                    }
-                  >
-                    <ShieldCheck className="h-2.5 w-2.5" />
-                    MOU
-                  </span>
+          <div
+            key={client._id}
+            className="rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm space-y-3"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-base truncate">{client.name}</div>
+                {client.description && (
+                  <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
+                    {client.description}
+                  </p>
                 )}
+                <div className="mt-1 text-xs text-muted-foreground">
+                  Added by {client.createdByName} • Since {formatDate(client.createdAt)}
+                </div>
               </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant={client.isActive ? "success" : "secondary"}>
+              <Badge variant={client.isActive ? "success" : "secondary"} className="shrink-0">
                 {client.isActive ? "Active" : "Archived"}
               </Badge>
-              <div className="mt-1 text-xs text-muted-foreground">
-                Since {formatDate(client.createdAt)}
-              </div>
-            </TableCell>
-            <TableCell className="text-sm text-muted-foreground">{client.createdByName}</TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Deliverables"
-                  onClick={() => onDeliverables(client)}
+            </div>
+
+            {/* Reference links */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <LinkDot present={!!client.deckLink} label="Deck" />
+              <LinkDot present={!!client.deliverablesLink} label="Deliverables" />
+              <LinkDot present={!!client.contentLink} label="Content" />
+              {isSuperAdmin && (
+                <span
+                  title={client.mouLink ? "MOU link added" : "No MOU link yet"}
+                  className={
+                    "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium " +
+                    (client.mouLink ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground")
+                  }
                 >
-                  <CalendarRange className="h-4 w-4" />
+                  <ShieldCheck className="h-2.5 w-2.5" />
+                  MOU
+                </span>
+              )}
+            </div>
+
+            {/* Actions Grid */}
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/60">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 text-xs flex-1 min-w-[120px]"
+                onClick={() => onDeliverables(client)}
+              >
+                <CalendarRange className="mr-1.5 h-3.5 w-3.5" />
+                Deliverables
+              </Button>
+
+              {client.deckLink && (
+                <Button variant="ghost" size="sm" className="h-9 px-2.5 text-xs" asChild>
+                  <a href={client.deckLink} target="_blank" rel="noopener noreferrer">
+                    <Presentation className="mr-1.5 h-3.5 w-3.5" />
+                    Deck
+                  </a>
                 </Button>
-                {client.deckLink && (
-                  <Button variant="ghost" size="icon" title="Open deck" asChild>
-                    <a href={client.deckLink} target="_blank" rel="noopener noreferrer">
-                      <Presentation className="h-4 w-4" />
-                    </a>
+              )}
+
+              {client.contentLink && (
+                <Button variant="ghost" size="sm" className="h-9 px-2.5 text-xs" asChild>
+                  <a href={client.contentLink} target="_blank" rel="noopener noreferrer">
+                    <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
+                    Content
+                  </a>
+                </Button>
+              )}
+
+              {canManage && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 px-2.5 text-xs"
+                    onClick={() => onEdit(client)}
+                  >
+                    <Pencil className="mr-1.5 h-3.5 w-3.5" />
+                    Edit
                   </Button>
-                )}
-                {client.contentLink && (
-                  <Button variant="ghost" size="icon" title="Open content" asChild>
-                    <a href={client.contentLink} target="_blank" rel="noopener noreferrer">
-                      <FolderOpen className="h-4 w-4" />
-                    </a>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-9 text-xs"
+                    onClick={() => toggleActive(client)}
+                  >
+                    {client.isActive ? "Archive" : "Reactivate"}
                   </Button>
-                )}
-                {canManage && (
-                  <>
-                    <Button variant="ghost" size="icon" title="Edit client" onClick={() => onEdit(client)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => toggleActive(client)}>
-                      {client.isActive ? "Archive" : "Reactivate"}
-                    </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 text-destructive"
+                    title="Delete"
+                    onClick={() => remove(client)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Table View (shown on md+ screens) */}
+      <div className="hidden md:block overflow-x-auto rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Client</TableHead>
+              <TableHead>Reference links</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Added by</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {clients.map((client) => (
+              <TableRow key={client._id}>
+                <TableCell className="font-medium">
+                  {client.name}
+                  {client.description && (
+                    <div className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
+                      {client.description}
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <LinkDot present={!!client.deckLink} label="Deck" />
+                    <LinkDot present={!!client.deliverablesLink} label="Deliverables" />
+                    <LinkDot present={!!client.contentLink} label="Content" />
+                    {isSuperAdmin && (
+                      <span
+                        title={client.mouLink ? "MOU link added" : "No MOU link yet"}
+                        className={
+                          "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium " +
+                          (client.mouLink ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground")
+                        }
+                      >
+                        <ShieldCheck className="h-2.5 w-2.5" />
+                        MOU
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={client.isActive ? "success" : "secondary"}>
+                    {client.isActive ? "Active" : "Archived"}
+                  </Badge>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    Since {formatDate(client.createdAt)}
+                  </div>
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">{client.createdByName}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1">
                     <Button
                       variant="ghost"
                       size="icon"
-                      title="Delete"
-                      onClick={() => remove(client)}
+                      title="Deliverables"
+                      onClick={() => onDeliverables(client)}
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <CalendarRange className="h-4 w-4" />
                     </Button>
-                  </>
-                )}
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                    {client.deckLink && (
+                      <Button variant="ghost" size="icon" title="Open deck" asChild>
+                        <a href={client.deckLink} target="_blank" rel="noopener noreferrer">
+                          <Presentation className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                    {client.contentLink && (
+                      <Button variant="ghost" size="icon" title="Open content" asChild>
+                        <a href={client.contentLink} target="_blank" rel="noopener noreferrer">
+                          <FolderOpen className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                    {canManage && (
+                      <>
+                        <Button variant="ghost" size="icon" title="Edit client" onClick={() => onEdit(client)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => toggleActive(client)}>
+                          {client.isActive ? "Archive" : "Reactivate"}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Delete"
+                          onClick={() => remove(client)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 }

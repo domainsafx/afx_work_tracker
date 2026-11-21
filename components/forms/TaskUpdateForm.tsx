@@ -103,7 +103,7 @@ export function TaskUpdateForm({
           value={workDone}
           onChange={(e) => setWorkDone(e.target.value)}
           rows={2}
-          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           placeholder="What did you complete?"
         />
       </div>
@@ -114,7 +114,7 @@ export function TaskUpdateForm({
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={2}
-          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           placeholder="Anything the assigner should know"
         />
       </div>
@@ -132,7 +132,7 @@ export function TaskUpdateForm({
             value={issueDescription}
             onChange={(e) => setIssueDescription(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/50"
+            className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/50"
             placeholder="Explain exactly what's blocking this task"
           />
           <p className="text-xs text-muted-foreground">This will be sent to whoever assigned the task.</p>
@@ -162,8 +162,8 @@ export function TaskUpdateForm({
         />
       </div>
 
-      <Button onClick={submit} disabled={updateProgress.isPending} className="w-full">
-        {updateProgress.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={updateProgress.isPending} className="w-full h-11 sm:h-10 text-sm font-medium">
+        {updateProgress.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
         {isCompleted ? "Mark as Completed" : "Submit for Approval"}
       </Button>
     </div>

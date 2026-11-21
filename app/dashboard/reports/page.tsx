@@ -40,21 +40,30 @@ export default function ReportsPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle>Completion %</CardTitle></CardHeader>
-          <CardContent><TasksByStatusChart data={statusData} /></CardContent>
+          <CardHeader className="pb-2 sm:pb-4"><CardTitle>Completion %</CardTitle></CardHeader>
+          <CardContent className="p-2 sm:p-6"><TasksByStatusChart data={statusData} /></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle>Tasks per employee</CardTitle></CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={employeeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(230 20% 22%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip contentStyle={{ background: "hsl(230 30% 14%)", border: "1px solid hsl(230 20% 24%)", borderRadius: 12 }} />
-                <Bar dataKey="value" fill="#8b8ff5" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardHeader className="pb-2 sm:pb-4"><CardTitle>Tasks per employee</CardTitle></CardHeader>
+          <CardContent className="p-2 sm:p-6">
+            <div className="h-[280px] w-full min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={employeeData} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(230 20% 22%)" />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 10 }}
+                    interval={0}
+                    angle={-35}
+                    textAnchor="end"
+                    height={45}
+                  />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: "hsl(230 30% 14%)", border: "1px solid hsl(230 20% 24%)", borderRadius: 12, fontSize: 12 }} />
+                  <Bar dataKey="value" fill="#8b8ff5" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>

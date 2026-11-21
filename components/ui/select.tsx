@@ -14,14 +14,14 @@ export const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between rounded-xl border border-border bg-secondary/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50",
+      "flex h-11 sm:h-10 w-full items-center justify-between rounded-xl border border-border bg-secondary/50 px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/50",
       className
     )}
     {...props}
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
+      <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -34,7 +34,7 @@ export const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
-      className={cn("z-50 overflow-hidden rounded-xl border border-border bg-card", className)}
+      className={cn("z-50 overflow-hidden rounded-xl border border-border bg-card shadow-lg max-h-[var(--radix-select-content-available-height,300px)]", className)}
       {...props}
     >
       <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
@@ -50,7 +50,7 @@ export const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-secondary",
+      "relative flex cursor-pointer select-none items-center rounded-lg py-2.5 sm:py-1.5 pl-8 pr-2 text-base sm:text-sm outline-none focus:bg-secondary",
       className
     )}
     {...props}

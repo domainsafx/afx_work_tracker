@@ -47,7 +47,137 @@ export function EmployeeTable({
 
   return (
     <>
-      <Table>
+      {/* Mobile Card View (< md) */}
+      <div className="space-y-3 md:hidden">
+        {users.map((u) => (
+          <div key={u._id} className="rounded-xl border border-border bg-card p-4 space-y-3 shadow-xs">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <Link
+                  href={`/dashboard/employees/${u._id}`}
+                  className="font-semibold text-foreground hover:text-primary hover:underline text-sm truncate block"
+                >
+                  {u.name}
+                </Link>
+                <div className="text-xs text-muted-foreground truncate">{u.email}</div>
+                {u.phone && (
+                  <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                    <MessageCircle className="h-3 w-3 text-success shrink-0" />
+                    <span>{u.phone}</span>
+                    {u.whatsappOptIn === false && <span className="text-[10px] text-muted-foreground">(muted)</span>}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <Badge variant={u.isActive ? "success" : "destructive"} className="text-[10px] px-1.5 py-0">
+                  {u.isActive ? "Active" : "Inactive"}
+                </Badge>
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  {u.role.replace("_", " ")}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs border-y border-border/60 py-2">
+              <div>
+                <span className="text-muted-foreground block text-[10px] uppercase font-medium">Department</span>
+                <span className="font-medium text-foreground">{u.department ?? "—"}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[10px] uppercase font-medium">Designation</span>
+                <span className="font-medium text-foreground truncate block">{u.designation ?? "—"}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[10px] uppercase font-medium">Availability</span>
+                <Badge
+                  variant={
+                    u.availabilityStatus === "ACTIVE"
+                      ? "success"
+                      : u.availabilityStatus === "ON_LEAVE"
+                        ? "secondary"
+                        : "destructive"
+                  }
+                  className="mt-0.5 text-[10px] px-1.5 py-0"
+                >
+                  {u.availabilityStatus?.replace("_", " ") ?? "ACTIVE"}
+                </Badge>
+                {u.availabilityStatus === "ON_LEAVE" && u.leaveTo && (
+                  <span className="block text-[10px] text-muted-foreground mt-0.5">
+                    Till {formatDate(u.leaveTo)}
+                  </span>
+                )}
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[10px] uppercase font-medium">Joined</span>
+                <span className="text-muted-foreground">{u.joiningDate ? formatDate(u.joiningDate) : "—"}</span>
+              </div>
+            </div>
+
+            {canManage && (
+              <div className="flex flex-wrap items-center justify-end gap-1.5 pt-1">
+                <Link href={`/dashboard/employees/${u._id}`} className="flex-1 min-w-[100px]">
+                  <Button variant="outline" size="sm" className="w-full text-xs h-9">
+                    <Eye className="h-3.5 w-3.5 mr-1" /> View & Edit
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs h-9 px-2.5"
+                  onClick={() => onUpdateAvailability(u)}
+                >
+                  Availability
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9"
+                  title={u.isActive ? "Deactivate" : "Activate"}
+                  onClick={() =>
+                    toast.promise(setActive.mutateAsync({ id: u._id, isActive: !u.isActive }), {
+                      loading: "Updating...",
+                      success: `User ${u.isActive ? "deactivated" : "activated"}`,
+                      error: "Failed to update user",
+                    })
+                  }
+                >
+                  {u.isActive ? <UserX className="h-4 w-4 text-warning" /> : <UserCheck className="h-4 w-4 text-success" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9"
+                  title="WhatsApp number"
+                  onClick={() => setContactUser(u)}
+                >
+                  <MessageCircle className="h-4 w-4 text-primary" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-destructive hover:text-destructive"
+                  title="Delete"
+                  onClick={() => {
+                    if (confirm(`Delete ${u.name}? This cannot be undone.`)) {
+                      toast.promise(deleteUser.mutateAsync(u._id), {
+                        loading: "Deleting...",
+                        success: "User deleted",
+                        error: "Failed to delete user",
+                      });
+                    }
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Table View (>= md) */}
+      <div className="hidden md:block">
+        <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Employee</TableHead>
@@ -170,7 +300,8 @@ export function EmployeeTable({
           </TableRow>
         ))}
       </TableBody>
-      </Table>
+        </Table>
+      </div>
       <EditContactDialog user={contactUser} onClose={() => setContactUser(null)} />
     </>
   );

@@ -78,12 +78,12 @@ export function MeetingForm({ onDone }: { onDone: () => void }) {
         <textarea
           {...register("description")}
           rows={2}
-          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="w-full rounded-xl border border-border bg-secondary/50 px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           placeholder="What's this meeting about? (optional)"
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Date & time</Label>
           <Input type="datetime-local" {...register("scheduledAt")} />
@@ -96,7 +96,7 @@ export function MeetingForm({ onDone }: { onDone: () => void }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Where</Label>
           <Select value={meetingType} onValueChange={(v) => setValue("meetingType", v as "IN_APP" | "EXTERNAL")}>
@@ -155,7 +155,7 @@ export function MeetingForm({ onDone }: { onDone: () => void }) {
         {errors.participantIds && <p className="text-xs text-destructive">{errors.participantIds.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full" disabled={createMeeting.isPending}>
+      <Button type="submit" className="w-full h-10 sm:h-9 font-medium" disabled={createMeeting.isPending}>
         {createMeeting.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Schedule meeting
       </Button>

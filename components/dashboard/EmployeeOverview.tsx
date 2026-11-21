@@ -14,9 +14,9 @@ export function EmployeeOverview() {
 
   if (isLoading || !stats) {
     return (
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24" />
+          <Skeleton key={i} className="h-20 sm:h-24 rounded-xl" />
         ))}
       </div>
     );
@@ -29,7 +29,7 @@ export function EmployeeOverview() {
         <p className="text-sm text-muted-foreground">Here&apos;s what&apos;s on your plate today, welcome back to AFX Digital.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
         <StatCard label="Today's tasks" value={stats.today} icon={CalendarDays} />
         <StatCard label="Pending" value={stats.pending} icon={Clock} tone="warning" />
         <StatCard label="Completed" value={stats.completed} icon={CheckCircle2} tone="success" />

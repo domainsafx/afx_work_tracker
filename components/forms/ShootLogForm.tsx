@@ -95,7 +95,7 @@ export function ShootLogForm({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-2">
           <Label>Shoot title</Label>
           <Input value={shootTitle} onChange={(e) => setShootTitle(e.target.value)} placeholder="e.g. Product shoot — Acme" />
@@ -153,30 +153,30 @@ export function ShootLogForm({
                         </span>
                       </label>
                       {isSelected && (
-                        <div className="mt-2 flex flex-wrap items-center gap-2 pl-6">
+                        <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2 pl-6">
                           <div className="flex items-center gap-1">
                             <Button
                               type="button"
                               size="icon"
                               variant="outline"
-                              className="h-6 w-6"
+                              className="h-7 w-7"
                               onClick={() => setQuantity(item._id, selected[item._id].quantity - 1)}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-6 text-center text-sm">{selected[item._id].quantity}</span>
+                            <span className="w-8 text-center text-sm font-medium">{selected[item._id].quantity}</span>
                             <Button
                               type="button"
                               size="icon"
                               variant="outline"
-                              className="h-6 w-6"
+                              className="h-7 w-7"
                               onClick={() => setQuantity(item._id, selected[item._id].quantity + 1, available)}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
                           </div>
                           <Input
-                            className="h-7 flex-1 min-w-40 text-xs"
+                            className="h-8 flex-1 text-xs"
                             placeholder="Note (condition, serial, etc.)"
                             value={selected[item._id].takeNote}
                             onChange={(e) => setNote(item._id, e.target.value)}
@@ -193,8 +193,8 @@ export function ShootLogForm({
         <p className="text-xs text-muted-foreground">{selectedCount} item(s) selected</p>
       </div>
 
-      <Button onClick={submit} disabled={createLog.isPending} className="w-full">
-        {createLog.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Button onClick={submit} disabled={createLog.isPending} className="w-full h-10 sm:h-9 font-medium">
+        {createLog.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Log checkout
       </Button>
     </div>

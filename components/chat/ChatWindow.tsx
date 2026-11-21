@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Eye, MessageSquare, Phone, Send, Users, Video } from "lucide-react";
+import { ArrowLeft, Eye, MessageSquare, Phone, Send, Users, Video } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,6 +31,7 @@ export function ChatWindow({
   isLoading,
   senderNames,
   readOnly = false,
+  onBack,
   onSend,
   isSending,
   onStartCall,
@@ -44,6 +45,7 @@ export function ChatWindow({
   isLoading: boolean;
   senderNames: Record<string, string>;
   readOnly?: boolean;
+  onBack?: () => void;
   onSend?: (content: string) => void;
   isSending?: boolean;
   onStartCall?: (callType: "AUDIO" | "VIDEO") => void;
@@ -65,8 +67,19 @@ export function ChatWindow({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 border-b border-border p-4">
-        <Avatar>
+      <div className="flex items-center gap-2 sm:gap-3 border-b border-border p-3 sm:p-4">
+        {onBack && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 md:hidden shrink-0"
+            onClick={onBack}
+            title="Back to conversations"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <Avatar className="h-9 w-9 sm:h-10 sm:w-10 shrink-0">
           <AvatarFallback>{isGroup ? <Users className="h-4 w-4" /> : initials(title)}</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
@@ -79,10 +92,11 @@ export function ChatWindow({
           </span>
         )}
         {onStartCall && (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <Button
               variant="outline"
               size="icon"
+              className="h-9 w-9"
               title="Voice call"
               onClick={() => onStartCall("AUDIO")}
               disabled={isStartingCall}
@@ -92,6 +106,7 @@ export function ChatWindow({
             <Button
               variant="outline"
               size="icon"
+              className="h-9 w-9"
               title="Video call"
               onClick={() => onStartCall("VIDEO")}
               disabled={isStartingCall}
@@ -102,7 +117,7 @@ export function ChatWindow({
         )}
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto p-4">
+      <div className="flex-1 space-y-3 overflow-y-auto p-3 sm:p-4">
         {isLoading && (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -129,7 +144,7 @@ export function ChatWindow({
               )}
               <div
                 className={cn(
-                  "max-w-[75%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm",
+                  "max-w-[85%] sm:max-w-[75%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm",
                   mine ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
                 )}
               >
@@ -143,7 +158,7 @@ export function ChatWindow({
       </div>
 
       {!readOnly && (
-        <div className="flex items-end gap-2 border-t border-border p-3">
+        <div className="flex items-end gap-2 border-t border-border p-2.5 sm:p-3">
           <Textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -154,10 +169,10 @@ export function ChatWindow({
               }
             }}
             placeholder="Type a message…"
-            className="min-h-10 flex-1 resize-none"
+            className="min-h-10 flex-1 resize-none text-base sm:text-sm"
             rows={1}
           />
-          <Button size="icon" onClick={handleSend} disabled={!draft.trim() || isSending}>
+          <Button size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={handleSend} disabled={!draft.trim() || isSending}>
             <Send className="h-4 w-4" />
           </Button>
         </div>
